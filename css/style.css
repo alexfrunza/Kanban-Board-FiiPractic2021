@@ -48,6 +48,19 @@ img.avatar-m {
     margin-right: 0.25rem;
 }
 
+.button-reset {
+    font-family: inherit;
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 1rem;
+    color: #333333;
+}
+
+.button-reset:focus {
+    outline: none;
+}
+
 /* ASIDE */
 
 aside {
@@ -66,7 +79,7 @@ aside .buttons-top {
     flex-flow: column wrap;
 }
 
-aside .buttons-top i {
+aside .buttons-top button {
     margin-top: 1rem;
 }
 
