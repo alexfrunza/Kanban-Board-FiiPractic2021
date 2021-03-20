@@ -9,6 +9,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="assets/styles/style.css">
+    <link rel="stylesheet" href="assets/styles/addTaskForm.css">
     <script src="https://kit.fontawesome.com/93647f5727.js" crossorigin="anonymous"></script>
     <title>Kanban Board</title>
 </head>
@@ -18,7 +19,7 @@
     <aside>
         <div class="buttons-top">
             <button class="button-reset"><i class="fas fa-search white-icon"></i></button>
-            <button class="button-reset"><i class="fas fa-plus white-icon"></i></button>
+            <button class="button-reset" id="addTask"><i class="fas fa-plus white-icon"></i></button>
         </div>
         <img class="avatar" src="https://avatarfiles.alphacoders.com/226/thumb-1920-226760.jpg" alt="user avatar">
     </aside>
@@ -42,129 +43,33 @@
         </div>
         
         <div class="container">
-            <section>
+            <section id="backlog">
                 <h2 class="secondary-header">BACKLOG</h2>
                 <article class="task">
                     <h3 class="task-title">Merry Christmas</h3>
+                    <button class="button-reset removeTaskButton"><i class="fas fa-times"></i></button>
                     <div class="task-details">
                         <div class="users">
                             <img class="avatar" src="https://avatarfiles.alphacoders.com/226/thumb-1920-226760.jpg" alt="user avatar">
                             <img class="avatar" src="https://avatarfiles.alphacoders.com/226/thumb-1920-226760.jpg" alt="user avatar">
                         </div>
                         <span class="tag">STORY-123</span>
-                        <i class="fas fa-check-square blue-icon fa-2x margin-right-s"></i>
-                        <i class="fas fa-arrow-up orange-icon fa-2x"></i>
-                    </div>
-                </article>
-                <article class="task">
-                    <h3 class="task-title">Jira Clone Storybook - Update 10/2020</h3>
-                    <div class="task-details">
-                        <div class="users">
-                            <img class="avatar" src="https://avatarfiles.alphacoders.com/226/thumb-1920-226760.jpg" alt="user avatar">
-                            <img class="avatar" src="https://avatarfiles.alphacoders.com/226/thumb-1920-226760.jpg" alt="user avatar">
-                            <img class="avatar" src="https://avatarfiles.alphacoders.com/226/thumb-1920-226760.jpg" alt="user avatar">
-
-                        </div>
-                        <span class="tag">STORY-123</span>
-                        <i class="fas fa-bookmark green-icon fa-2x margin-right-s"></i>
-                        <i class="fas fa-arrow-up red-icon fa-2x"></i>
-                    </div>
-                </article>
-                <article class="task">
-                    <h3 class="task-title">What is Angular Jira clone application?</h3>
-                    <div class="task-details">
-                        <div class="users">
-                            <img class="avatar" src="https://avatarfiles.alphacoders.com/226/thumb-1920-226760.jpg" alt="user avatar">
-                        </div>
-                        <span class="tag">TASK-122343</span>
-                        <i class="fas fa-check-square blue-icon fa-2x margin-right-s"></i>
-                        <i class="fas fa-arrow-up red-icon fa-2x"></i>
-                    </div>
-                </article>
-                <article class="task">
-                    <h3 class="task-title">Who is the author of Angular Jira clone?</h3>
-                    <div class="task-details">
-                        <div class="users">
-                            <img class="avatar" src="https://avatarfiles.alphacoders.com/226/thumb-1920-226760.jpg" alt="user avatar">
-                            <img class="avatar" src="https://avatarfiles.alphacoders.com/226/thumb-1920-226760.jpg" alt="user avatar">
-                        </div>
-                        <span class="tag">STORY-123</span>
-                        <i class="far fa-stop-circle red-icon fa-2x margin-right-s"></i>
+                        <i class="fas fa-check-square blue-icon margin-right-s fa-2x"></i>
                         <i class="fas fa-arrow-up orange-icon fa-2x"></i>
                     </div>
                 </article>
             </section>
 
-            <section>
+            <section id="selected-for-development">
                 <h2 class="secondary-header">SELECTED FOR DEVELOPMENT</h2>
-                <article class="task">
-                    <h3 class="task-title">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Iusto, laborum?</h3>
-                    <div class="task-details">
-                        <div class="users">
-                            <img class="avatar" src="https://avatarfiles.alphacoders.com/226/thumb-1920-226760.jpg" alt="user avatar">
-                            <img class="avatar" src="https://avatarfiles.alphacoders.com/226/thumb-1920-226760.jpg" alt="user avatar">
-                        </div>
-                        <span class="tag">TASK-123</span>
-                        <i class="fas fa-check-square blue-icon fa-2x margin-right-s"></i>
-                        <i class="fas fa-arrow-up red-icon fa-2x"></i>
-                    </div>
-                </article>
-                <article class="task">
-                    <h3 class="task-title">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Assumenda, provident?</h3>
-                    <div class="task-details">
-                        <div class="users">
-                            <img class="avatar" src="https://avatarfiles.alphacoders.com/226/thumb-1920-226760.jpg" alt="user avatar">
-                            <img class="avatar" src="https://avatarfiles.alphacoders.com/226/thumb-1920-226760.jpg" alt="user avatar">
-                        </div>
-                        <span class="tag">TASK-123</span>
-                        <i class="far fa-stop-circle red-icon fa-2x margin-right-s"></i>
-                        <i class="fas fa-arrow-up red-icon fa-2x"></i>
-                    </div>
-                </article>
             </section>
 
-            <section>
+            <section id="in-progress">
                 <h2 class="secondary-header">IN PROGRESS</h2>
-                <article class="task">
-                    <h3 class="task-title">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Atque est exercitationem expedita iusto pariatur quasi!</h3>
-                    <div class="task-details">
-                        <div class="users">
-                            <img class="avatar" src="https://avatarfiles.alphacoders.com/226/thumb-1920-226760.jpg" alt="user avatar">
-                            <img class="avatar" src="https://avatarfiles.alphacoders.com/226/thumb-1920-226760.jpg" alt="user avatar">
-                        </div>
-                        <span class="tag">TASK-123</span>
-                        <i class="fas fa-check-square blue-icon fa-2x margin-right-s"></i>
-                        <i class="fas fa-arrow-up orange-icon fa-2x"></i>
-                    </div>
-                </article>
             </section>
 
-            <section>
+            <section id="done">
                 <h2 class="secondary-header">DONE</h2>
-                <article class="task">
-                    <h3 class="task-title">Merry Christmas</h3>
-                    <div class="task-details">
-                        <div class="users">
-                            <img class="avatar" src="https://avatarfiles.alphacoders.com/226/thumb-1920-226760.jpg" alt="user avatar">
-                            <img class="avatar" src="https://avatarfiles.alphacoders.com/226/thumb-1920-226760.jpg" alt="user avatar">
-                        </div>
-                        <span class="tag">TASK-123</span>
-                        <i class="far fa-stop-circle red-icon fa-2x margin-right-s"></i>
-                        <i class="fas fa-arrow-up red-icon fa-2x"></i>
-                    </div>
-                </article>
-                <article class="task">
-                    <h3 class="task-title">Merry Christmas</h3>
-                    <div class="task-details">
-                        <div class="users">
-                            <img class="avatar" src="https://avatarfiles.alphacoders.com/226/thumb-1920-226760.jpg" alt="user avatar">
-                            <img class="avatar" src="https://avatarfiles.alphacoders.com/226/thumb-1920-226760.jpg" alt="user avatar">
-                        </div>
-                        <span class="tag">TASK-123</span>
-                        <i class="fas fa-bookmark green-icon fa-2x margin-right-s"></i>
-                        <i class="fas fa-arrow-up orange-icon fa-2x"></i>
-                    </div>
-                </article>
             </section>
         </div>
 
