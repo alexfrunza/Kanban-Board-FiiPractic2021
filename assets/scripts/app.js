@@ -65,7 +65,11 @@ function showForm() {
     const form = document.body.appendChild(compileAddTaskForm());
     const closeButton = form.querySelector("#closeAddTaskForm");
 
+    const container = document.querySelector('.container')
+    container.style.overflow = 'hidden';
+
     closeButton.addEventListener('click', () => {
+        container.style.overflow = 'auto';
         form.remove();
     }, {once: true});
 
@@ -87,9 +91,10 @@ function compileAddTaskForm() {
 <div class="modal">
     <div class="modal-content">
         <div class="modal-guts">
-            <h3>Add a new task</h3>
-            <button class="button-reset" id="closeAddTaskForm"><i class="fas fa-times"></i></button>
-            <form id="addTaskForm" action="" method="POST">
+            <div class="overflow">
+                <h3>Add a new task</h3>
+                <button class="button-reset" id="closeAddTaskForm"><i class="fas fa-times"></i></button>
+                <form id="addTaskForm" action="" method="POST">
                 <label for="title">Title</label>
                 <input type="text" name="title" id="title">
                     
@@ -101,7 +106,6 @@ function compileAddTaskForm() {
                     <option value="high">HIGH</option>
                     <option value="urgent">URGENT</option>
                 </select>
-                
                 <label for="column">Column</label>
                 <select name="column" id="column">
                     <option disabled selected value> -- select an option -- </option>
@@ -109,10 +113,10 @@ function compileAddTaskForm() {
                     <option value="selected-for-development">Selected for development</option>
                     <option value="in-progress">In progress</option>
                     <option value="done">Done</option>
-                </select>
-                      
+                </select>   
                 <button class="button-reset btn btn-primary" name="submit" type="submit">Add task</button>
-            </form>
+            </form>      
+            </div>
         </div>
     </div>
 </div>
