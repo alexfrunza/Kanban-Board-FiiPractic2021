@@ -49,6 +49,7 @@ img.avatar-m {
 }
 
 .button-reset {
+    user-select: none;
     font-family: inherit;
     background: none;
     border: none;
@@ -59,6 +60,17 @@ img.avatar-m {
 
 .button-reset:focus {
     outline: none;
+}
+
+.btn {
+    padding: 1rem;
+    border-radius: 5px;
+}
+
+.btn-primary {
+    background:  #2322a7;
+    color: white;
+    border: none;
 }
 
 /* ASIDE */

@@ -86,31 +86,34 @@ function compileAddTaskForm() {
     const formString = `
 <div class="modal">
     <div class="modal-content">
-        <h3>Add a new task</h3>
-        <button class="button-reset" id="closeAddTaskForm"><i class="fas fa-times"></i></button>
-        <form id="addTaskForm" action="" method="POST">
-        
-            <label for="title">Title</label>
-            <input type="text" name="title" id="title">
+        <div class="modal-guts">
+            <h3>Add a new task</h3>
+            <button class="button-reset" id="closeAddTaskForm"><i class="fas fa-times"></i></button>
+            <form id="addTaskForm" action="" method="POST">
+                <label for="title">Title</label>
+                <input type="text" name="title" id="title">
+                    
+                <label for="tag">Tag</label>
+                <select name="tag" id="tag">
+                    <option disabled selected value> -- select an option -- </option>
+                    <option value="low">LOW</option>
+                    <option value="medium">MEDIUM</option>
+                    <option value="high">HIGH</option>
+                    <option value="urgent">URGENT</option>
+                </select>
                 
-            <label for="tag">Tag</label>
-            <select name="tag" id="tag">
-                <option value="low">LOW</option>
-                <option value="medium">MEDIUM</option>
-                <option value="high">HIGH</option>
-                <option value="urgent">URGENT</option>
-            </select>
-            
-            <label for="column">Column</label>
-            <select name="column" id="column">
-                <option value="backlog">Backlog</option>
-                <option value="selected-for-development">Selected for development</option>
-                <option value="in-progress">In progress</option>
-                <option value="done">Done</option>
-            </select>
-        
-        <button name="submit" type="submit">Add task</button>
-    </form>
+                <label for="column">Column</label>
+                <select name="column" id="column">
+                    <option disabled selected value> -- select an option -- </option>
+                    <option value="backlog">Backlog</option>
+                    <option value="selected-for-development">Selected for development</option>
+                    <option value="in-progress">In progress</option>
+                    <option value="done">Done</option>
+                </select>
+                      
+                <button class="button-reset btn btn-primary" name="submit" type="submit">Add task</button>
+            </form>
+        </div>
     </div>
 </div>
   `.trim();
