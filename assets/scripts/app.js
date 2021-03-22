@@ -13,10 +13,8 @@ const taskTemplate = `
                 <img class="avatar" src="https://avatarfiles.alphacoders.com/226/thumb-1920-226760.jpg" alt="user avatar">
             </div>
             <span class="tag">{tag}</span>
-<!--            <i class="fas fa-check-square blue-icon fa-2x margin-right-s"></i>-->
-<!--            <i class="fas fa-arrow-up orange-icon fa-2x"></i>-->
-            {icon1}
-            {icon2}
+            <i class="fas {icon1} blue-icon fa-2x margin-right-s"></i>
+            <i class="fas {icon2} orange-icon fa-2x"></i>
         </div>
     </article>
 `
@@ -29,15 +27,17 @@ function compileToNode(domString) {
     return div.firstElementChild;
 }
 
-function compileTaskTemplate(title, tag, template) {
+function compileTaskTemplate(title, tag, icon1, icon2, template) {
     const compiledTemplate = template
         .replace("{title}", title)
-        .replace("{tag}", tag);
+        .replace("{tag}", tag)
+        .replace("{icon1}", icon1)
+        .replace("{icon2}", icon2);
     return compileToNode(compiledTemplate);
 }
 
-function addTask(title, tag, columnName) {
-    const task = compileTaskTemplate(title, tag, taskTemplate);
+function addTask(title, tag, columnName, icon1, icon2) {
+    const task = compileTaskTemplate(title, tag, icon1, icon2, taskTemplate);
     const column = document.getElementById(columnName);
 
     column.appendChild(task);
@@ -62,18 +62,14 @@ function removeTask(event) {
 addTaskButton.addEventListener("click", showForm);
 
 function showForm() {
+    // TODO Add transition
     const form = document.body.appendChild(compileAddTaskForm());
     const closeButton = form.querySelector("#closeAddTaskForm");
 
     const container = document.querySelector('.container')
     container.style.overflow = 'hidden';
 
-    closeButton.addEventListener('click', () => {
-        container.style.overflow = 'auto';
-        form.remove();
-    }, {once: true});
-
-    form.addEventListener('submit', (event) => {
+    function submitTask(event) {
         event.preventDefault();
         const {target} = event;
 
@@ -81,9 +77,20 @@ function showForm() {
         const tag = target.querySelector('[name="tag"]');
         const column = target.querySelector('[name="column"]');
 
-        // todo validate data!!
+        // TODO validate data!!
         addTask(title.value, tag.value, column.value);
-    });
+        closeAddTaskForm(event);
+    }
+
+    function closeAddTaskForm(event) {
+        container.style.overflow = 'auto';
+        form.removeEventListener('submit', submitTask);
+        closeButton.removeEventListener('click', closeAddTaskForm)
+        form.remove();
+    }
+
+    closeButton.addEventListener('click', closeAddTaskForm);
+    form.addEventListener('submit', submitTask);
 }
 
 function compileAddTaskForm() {
@@ -97,7 +104,7 @@ function compileAddTaskForm() {
                 <form id="addTaskForm" action="" method="POST">
                 <label for="title">Title</label>
                 <input type="text" name="title" id="title">
-                    
+                
                 <label for="tag">Tag</label>
                 <select name="tag" id="tag">
                     <option disabled selected value> -- select an option -- </option>
@@ -124,3 +131,46 @@ function compileAddTaskForm() {
 
     return compileToNode(formString);
 }
+
+
+let tasksArr = [
+    {
+        title: "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Excepturi, quaerat!",
+        tag: "MEDIUM",
+        column: "backlog",
+        icon1: "fa-check-square",
+        icon2: "fa-arrow-up",
+    },
+    {
+        title: "Lorem ipsum dolor sit amet.",
+        tag: "URGENT",
+        column: "selected-for-development",
+        icon1: "fa-check-square",
+        icon2: "fa-arrow-up",
+    },
+    {
+        title: "Lorem ipsum dolor sit amet, consectetur.",
+        tag: "LOW",
+        column: "done",
+        icon1: "fa-check-square",
+        icon2: "fa-arrow-up",
+    },
+    {
+        title: "Lorem ipsum dolor sit amet, consectetur adipisicing.",
+        tag: "HIGH",
+        column: "selected-for-development",
+        icon1: "fa-check-square",
+        icon2: "fa-arrow-up",
+    },
+    {
+        title: "Lorem ipsum dolor.",
+        tag: "HIGH",
+        column: "done",
+        icon1: "fa-check-square",
+        icon2: "fa-arrow-up",
+    }
+]
+
+tasksArr.forEach((task) => {
+    addTask(...Object.values(task))
+})
