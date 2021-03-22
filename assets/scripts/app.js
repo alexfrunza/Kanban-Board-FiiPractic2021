@@ -36,7 +36,7 @@ function compileTaskTemplate(title, tag, icon1, icon2, template) {
     return compileToNode(compiledTemplate);
 }
 
-function addTask(title, tag, columnName, icon1, icon2) {
+function addTask(title, tag, columnName, icon1="fa-check-square", icon2="fa-arrow-up") {
     const task = compileTaskTemplate(title, tag, icon1, icon2, taskTemplate);
     const column = document.getElementById(columnName);
 
@@ -62,12 +62,16 @@ function removeTask(event) {
 addTaskButton.addEventListener("click", showForm);
 
 function showForm() {
-    // TODO Add transition
     const form = document.body.appendChild(compileAddTaskForm());
     const closeButton = form.querySelector("#closeAddTaskForm");
 
     const container = document.querySelector('.container')
     container.style.overflow = 'hidden';
+
+    form.animate([
+        {opacity: 0},
+        {opacity: 1}
+    ], 500);
 
     function submitTask(event) {
         event.preventDefault();
@@ -77,18 +81,28 @@ function showForm() {
         const tag = target.querySelector('[name="tag"]');
         const column = target.querySelector('[name="column"]');
 
-        // TODO validate data!!
         addTask(title.value, tag.value, column.value);
         closeAddTaskForm(event);
     }
 
     function closeAddTaskForm(event) {
-        container.style.overflow = 'auto';
-        form.removeEventListener('submit', submitTask);
-        closeButton.removeEventListener('click', closeAddTaskForm)
-        form.remove();
+        if (this === closeButton
+            || event.target === form
+            || event.type === "submit") {
+
+                container.style.overflow = 'auto';
+                form.removeEventListener('submit', submitTask);
+                closeButton.removeEventListener('click', closeAddTaskForm);
+                form.removeEventListener('click', closeAddTaskForm);
+
+                form.animate([
+                    {opacity: 1},
+                    {opacity: 0}
+                ], 500).onfinish = form.remove.bind(form);
+        }
     }
 
+    form.addEventListener('click', closeAddTaskForm);
     closeButton.addEventListener('click', closeAddTaskForm);
     form.addEventListener('submit', submitTask);
 }
@@ -103,24 +117,24 @@ function compileAddTaskForm() {
                 <button class="button-reset" id="closeAddTaskForm"><i class="fas fa-times"></i></button>
                 <form id="addTaskForm" action="" method="POST">
                 <label for="title">Title</label>
-                <input type="text" name="title" id="title">
+                <input type="text" name="title" id="title" required>
                 
                 <label for="tag">Tag</label>
-                <select name="tag" id="tag">
-                    <option disabled selected value> -- select an option -- </option>
+                <select name="tag" id="tag" required>
+                    <option disabled selected value></option>
                     <option value="low">LOW</option>
                     <option value="medium">MEDIUM</option>
                     <option value="high">HIGH</option>
                     <option value="urgent">URGENT</option>
                 </select>
                 <label for="column">Column</label>
-                <select name="column" id="column">
-                    <option disabled selected value> -- select an option -- </option>
+                <select name="column" id="column" required>
+                    <option disabled selected value></option>
                     <option value="backlog">Backlog</option>
                     <option value="selected-for-development">Selected for development</option>
                     <option value="in-progress">In progress</option>
                     <option value="done">Done</option>
-                </select>   
+                </select>
                 <button class="button-reset btn btn-primary" name="submit" type="submit">Add task</button>
             </form>      
             </div>
