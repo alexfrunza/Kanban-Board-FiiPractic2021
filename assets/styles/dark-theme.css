@@ -1,0 +1,90 @@
+:root {
+    --dark-theme-bg-color: #1b2126;
+    --dark-theme-column-color: #1f2e3c;
+    --dark-theme-task-color: #2c3f51;
+    --dark-theme-primary-color: #21313f;
+    --dark-theme-text-color: #b1c4c8;
+    --dark-theme-input-color: #18232d;
+    --dark-theme-dark-green: #27553e;
+    --dark-theme-bright-green: #359440;
+}
+
+body {
+    background-color: var(--dark-theme-bg-color);
+    color: var(--dark-theme-text-color);
+}
+
+nav {
+    background-color: #262e35;
+    border-bottom-color: #131418;
+}
+
+nav .logo {
+    color: var(--dark-theme-text-color) !important;
+}
+
+.button-reset {
+    color: var(--dark-theme-text-color);
+}
+
+.btn {
+    background-color: var(--dark-theme-dark-green);
+    border: 1px var(--dark-theme-bright-green) solid;
+    color: #d7fbff;
+}
+
+.btn:hover {
+    background-color: var(--dark-theme-bright-green);
+}
+
+input,
+select {
+    background-color: var(--dark-theme-input-color);
+    border-color: #17323d !important;
+    color: var(--dark-theme-text-color);
+}
+
+input:focus,
+select:focus {
+    outline: solid #04819e 2px !important;
+}
+
+aside {
+    background-color: var(--dark-theme-primary-color);
+}
+
+aside img.avatar {
+    border-color: var(--dark-theme-bg-color);
+}
+
+main > .below-header img.avatar {
+    border-color: var( --dark-theme-bg-color);
+}
+
+main > .container > section {
+    background-color: var(--dark-theme-column-color);
+}
+
+main .task {
+    background-color: var(--dark-theme-task-color);
+}
+
+main .task img.avatar {
+    border-color: var(--dark-theme-task-color);
+}
+
+main .task:hover {
+    background-color: #1b3645;
+}
+
+main .task:hover img.avatar {
+    border-color: #1b3645;
+}
+
+.modal-guts {
+    background-color: var(--dark-theme-primary-color);
+}
+
+.modal-content {
+    background-color: var(--dark-theme-primary-color);
+}

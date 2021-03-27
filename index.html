@@ -10,25 +10,24 @@
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="assets/styles/style.css">
     <link rel="stylesheet" href="assets/styles/addTaskForm.css">
+<!--    <link rel="stylesheet" href="assets/styles/dark-theme.css">-->
     <script src="https://kit.fontawesome.com/93647f5727.js" crossorigin="anonymous"></script>
     <title>Kanban Board</title>
 </head>
 <body>
 
-<div class="container">
-    <aside>
-        <div class="buttons-top">
-            <button class="button-reset"><i class="fas fa-search white-icon"></i></button>
-            <button class="button-reset" id="addTask"><i class="fas fa-plus white-icon"></i></button>
-        </div>
-        <img class="avatar" src="https://avatarfiles.alphacoders.com/226/thumb-1920-226760.jpg" alt="user avatar">
-    </aside>
+<nav>
+    <i class="fab fa-pied-piper white-icon logo"></i>
+    <button class="button-reset white-icon" id="optionsToggler"><i class="fas fa-cog"></i> Options</button>
+    <button class="button-reset white-icon" id="themeToggler"><i class="fas fa-moon"></i> Night Mode</button>
+</nav>
 
+<div class="container">
     <main>
         <h1 class="primary-header">Kanban Board</h1>
         <div class="below-header">
             <div class="input-box">
-                <input type="text">
+                <input autocomplete="off" type="text">
                 <i class="fas fa-search white-icon"></i>
             </div>
             <div class="users">
