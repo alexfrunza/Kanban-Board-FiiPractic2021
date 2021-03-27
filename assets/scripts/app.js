@@ -5,7 +5,7 @@ Array.from(document.getElementsByClassName("removeTaskButton"))
 
 const taskTemplate = `
     <article class="task">
-        <button class="button-reset removeTaskButton"><i class="fas fa-times"></i></button>
+        <button class="button-reset removeTaskButton"><i class="fas fa-trash-alt"></i></button>
         <h3 class="task-title">{title}</h3>
         <div class="task-details">
             <div class="users">
@@ -18,7 +18,6 @@ const taskTemplate = `
         </div>
     </article>
 `
-const addTaskButton = document.getElementById("addTask");
 
 function compileToNode(domString) {
     const div = document.createElement("div");
@@ -58,8 +57,6 @@ function removeTask(event) {
     );
     animation.onfinish = task.remove.bind(task);
 }
-
-addTaskButton.addEventListener("click", showForm);
 
 function showForm() {
     const form = document.body.appendChild(compileAddTaskForm());
@@ -117,15 +114,15 @@ function compileAddTaskForm() {
                 <button class="button-reset" id="closeAddTaskForm"><i class="fas fa-times"></i></button>
                 <form id="addTaskForm" action="" method="POST">
                 <label for="title">Title</label>
-                <input type="text" name="title" id="title" required>
+                <input autocomplete="off" type="text" name="title" id="title" required>
                 
                 <label for="tag">Tag</label>
                 <select name="tag" id="tag" required>
                     <option disabled selected value></option>
-                    <option value="low">LOW</option>
-                    <option value="medium">MEDIUM</option>
-                    <option value="high">HIGH</option>
-                    <option value="urgent">URGENT</option>
+                    <option value="LOW">LOW</option>
+                    <option value="MEDIUM">MEDIUM</option>
+                    <option value="HIGH">HIGH</option>
+                    <option value="URGENT">URGENT</option>
                 </select>
                 <label for="column">Column</label>
                 <select name="column" id="column" required>
@@ -188,3 +185,89 @@ let tasksArr = [
 tasksArr.forEach((task) => {
     addTask(...Object.values(task))
 })
+
+
+function compileAside() {
+    const asideString = `    
+    <aside>
+        <div class="buttons-top">
+            <button class="button-reset"><i class="fas fa-search white-icon"></i></button>
+            <button class="button-reset" id="addTask"><i class="fas fa-plus white-icon"></i></button>
+        </div>
+        <img class="avatar" src="https://avatarfiles.alphacoders.com/226/thumb-1920-226760.jpg" alt="user avatar">
+    </aside>`.trim()
+    return compileToNode(asideString);
+}
+
+
+const optionsToggler = document.getElementById('optionsToggler');
+
+function asideToggleConstructor () {
+    const mainContent = document.querySelector('main')
+    const optionsAside = compileAside()
+    const page = document.querySelector('.container');
+    const addTaskButton = optionsAside.querySelector("#addTask");
+
+    function removeAside() {
+        mainContent.style.marginLeft = '0';
+        page.removeChild(optionsAside)
+        addTaskButton.removeEventListener("click", showForm);
+    }
+
+    function showAside() {
+        addTaskButton.addEventListener("click", showForm);
+        mainContent.style.marginLeft = '3rem';
+        page.prepend(optionsAside);
+    }
+
+    return {
+        removeAside,
+        showAside
+    }
+}
+
+const asideToggle = asideToggleConstructor();
+
+optionsToggler.addEventListener('click', () => {
+    optionsToggler.classList.contains('active') ? asideToggle.removeAside() : asideToggle.showAside();
+    optionsToggler.classList.toggle('active');
+})
+
+
+function darkThemeTogglerConstructor() {
+    const darkThemeTag = document.createElement('link')
+    darkThemeTag.setAttribute('rel', 'stylesheet')
+    darkThemeTag.setAttribute('href', 'assets/styles/dark-theme.css')
+    darkThemeTag.setAttribute('id', 'dark-theme')
+    const head = document.head
+
+    function on() {
+        head.appendChild(darkThemeTag);
+        localStorage.setItem('dark-mode', 'true');
+    }
+
+    function off() {
+        head.removeChild(darkThemeTag)
+        localStorage.removeItem('dark-mode');
+    }
+
+    return {
+        on,
+        off
+    }
+}
+
+const darkThemeToggler = document.getElementById('themeToggler')
+const darkThemeToggle = darkThemeTogglerConstructor()
+
+if(localStorage.getItem('dark-mode') === 'true') {
+    darkThemeToggler.classList.toggle('active');
+    darkThemeToggle.on();
+}
+
+darkThemeToggler.addEventListener('click', () => {
+    darkThemeToggler.classList.contains('active') ? darkThemeToggle.off() : darkThemeToggle.on();
+    darkThemeToggler.classList.toggle('active');
+})
+
+// TODO Add animations aside show/hide

@@ -15,12 +15,6 @@ body {
     display: flex;
 }
 
-.white-icon {color: #ffffff;}
-.green-icon {color: #00cb42;}
-.blue-icon {color: #29a7ea;}
-.red-icon {color: #fe446a;}
-.orange-icon {color: #fa9a51;}
-
 .primary-header {
     font-size: 2rem;
 }
@@ -63,7 +57,7 @@ img.avatar-m {
 }
 
 .btn {
-    padding: 1rem;
+    padding: 0.5rem 1rem;
     border-radius: 5px;
 }
 
@@ -73,18 +67,50 @@ img.avatar-m {
     border: none;
 }
 
+/* NAVBAR */
+
+nav {
+    z-index: 10;
+    height: 3rem;
+    position: fixed;
+    background-color: #2322a7;
+    width: 100vw;
+    border-bottom: #4949F2 1px solid;
+    display: flex;
+    padding: 0.5rem;
+    align-items: center;
+}
+
+nav > * {
+    margin-right: 1.5rem;
+}
+
+nav .logo {
+    margin-left: 1px;
+    font-size: 2rem;
+}
+
+nav #optionsToggler:hover,
+nav #themeToggler:hover {
+    color: #E3F218;
+}
+
+nav .active {
+    color: #E3F218;
+}
+
 /* ASIDE */
 
 aside {
-    z-index: 10;
+    z-index: 9;
     position: fixed;
-    background-color: #2322a7;
+    background-color: #4949F2;
     display: flex;
     flex-flow: column;
     justify-content: space-between;
     align-items: center;
     height: 100vh;
-    padding: 0.5rem;
+    padding: 3rem 0.5rem 0.5rem;
 }
 
 aside .buttons-top {
@@ -99,9 +125,8 @@ aside .buttons-top button {
 /* MAIN */
 
 main {
-    margin-left: 3rem;
+    margin-top: 3rem;
     padding: 2rem;
-    height: 100vh;
     flex-grow: 1;
 }
 
@@ -148,6 +173,10 @@ main .below-header .users img {
     margin-right: -1rem;
 }
 
+main .container {
+    align-items: start;
+}
+
 main > .container > section {
     min-height: 200px;
     flex: 1;
@@ -169,6 +198,11 @@ main > .container > section:last-child {
     margin-bottom: 1rem;
     border-radius: 2px;
     flex-basis: 25%;
+}
+
+.task:hover {
+    cursor: pointer;
+    background-color: #e7e7e7;
 }
 
 .removeTaskButton {
@@ -238,6 +272,10 @@ main .users img:last-child {
 /*For Mobile*/
 
 @media only screen and (max-width: 550px)  {
+    nav > * {
+        margin-right: 1rem;
+    }
+
     main {
         padding: 0.4rem;
     }
@@ -246,3 +284,9 @@ main .users img:last-child {
         font-size: 1rem;
     }
 }
+
+.white-icon {color: #ffffff;}
+.green-icon {color: #00cb42;}
+.blue-icon {color: #29a7ea;}
+.red-icon {color: #fe446a;}
+.orange-icon {color: #fa9a51;}
