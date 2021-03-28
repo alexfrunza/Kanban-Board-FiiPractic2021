@@ -1,3 +1,11 @@
+const darkThemeToggler = document.getElementById('themeToggler')
+const darkThemeToggle = darkThemeTogglerConstructor()
+
+if(localStorage.getItem('dark-mode') === 'true') {
+    darkThemeToggler.classList.toggle('active');
+    darkThemeToggle.on();
+}
+
 Array.from(document.getElementsByClassName("removeTaskButton"))
     .forEach((element) => {
         element.addEventListener('click', removeTask, {once: true})
@@ -209,14 +217,43 @@ function asideToggleConstructor () {
     const addTaskButton = optionsAside.querySelector("#addTask");
 
     function removeAside() {
-        mainContent.style.marginLeft = '0';
-        page.removeChild(optionsAside)
+        optionsToggler.disabled = true;
+
+        mainContent.animate([
+            {marginLeft: '3rem'},
+            {marginLeft: '0'}
+        ], {duration: 500, easing: 'ease-out'}).onfinish = () => {
+            mainContent.style.marginLeft = '0'
+        };
+
+        optionsAside.animate([
+            {marginLeft: '0'},
+            {marginLeft: '-3rem'}
+        ], {duration: 500, easing: 'ease-out'}).onfinish = () => {
+            optionsAside.remove();
+            optionsToggler.disabled = false;
+        }
+
         addTaskButton.removeEventListener("click", showForm);
     }
 
     function showAside() {
         addTaskButton.addEventListener("click", showForm);
-        mainContent.style.marginLeft = '3rem';
+        optionsToggler.disabled = true;
+
+        mainContent.animate([
+            {marginLeft: "0"},
+            {marginLeft: '3rem'}
+        ], {duration: 500, easing: "ease-out"}).onfinish = () => {
+            mainContent.style.marginLeft = '3rem';
+        };
+
+        optionsAside.animate([
+            {marginLeft: '-3rem'},
+            {marginLeft: '0'}
+        ], {duration: 500, easing: "ease-out"}).onfinish = () => {
+            optionsToggler.disabled = false;
+        }
         page.prepend(optionsAside);
     }
 
@@ -257,17 +294,7 @@ function darkThemeTogglerConstructor() {
     }
 }
 
-const darkThemeToggler = document.getElementById('themeToggler')
-const darkThemeToggle = darkThemeTogglerConstructor()
-
-if(localStorage.getItem('dark-mode') === 'true') {
-    darkThemeToggler.classList.toggle('active');
-    darkThemeToggle.on();
-}
-
 darkThemeToggler.addEventListener('click', () => {
     darkThemeToggler.classList.contains('active') ? darkThemeToggle.off() : darkThemeToggle.on();
     darkThemeToggler.classList.toggle('active');
 })
-
-// TODO Add animations aside show/hide
