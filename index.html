@@ -23,7 +23,7 @@
 </nav>
 
 <div class="container">
-    <main>
+    <main class="board">
         <h1 class="primary-header">Kanban Board</h1>
         <div class="below-header">
             <div class="input-box">
@@ -41,26 +41,31 @@
             <button class="button-reset">Only My Issues</button>
         </div>
         
-        <div class="container">
-            <section id="backlog">
-                <h2 class="secondary-header">BACKLOG</h2>
+        <div class="container board">
+            <section id="backlog" class="column">
+                <h2 class="secondary-header column-header">BACKLOG</h2>
+                <div class="tasks-list"></div>
             </section>
 
-            <section id="selected-for-development">
-                <h2 class="secondary-header">SELECTED FOR DEVELOPMENT</h2>
+            <section id="selected-for-development" class="column">
+                <h2 class="secondary-header column-header">SELECTED FOR DEVELOPMENT</h2>
+                <div class="tasks-list"></div>
             </section>
 
-            <section id="in-progress">
-                <h2 class="secondary-header">IN PROGRESS</h2>
+            <section id="in-progress" class="column">
+                <h2 class="secondary-header column-header">IN PROGRESS</h2>
+                <div class="tasks-list"></div>
             </section>
 
-            <section id="done">
-                <h2 class="secondary-header">DONE</h2>
+            <section id="done" class="column">
+                <h2 class="secondary-header column-header">DONE</h2>
+                <div class="tasks-list"></div>
             </section>
         </div>
 
     </main>
 
+    <script src="https://cdn.jsdelivr.net/npm/lodash@4.17.21/lodash.min.js"></script>
     <script type="module" src="assets/scripts/app.js"></script>
 </div>
 </body>
