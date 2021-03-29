@@ -12,7 +12,7 @@ Array.from(document.getElementsByClassName("removeTaskButton"))
     })
 
 const taskTemplate = `
-    <article class="task">
+    <article class="task" draggable="true">
         <button class="button-reset removeTaskButton"><i class="fas fa-trash-alt"></i></button>
         <h3 class="task-title">{title}</h3>
         <div class="task-details">
@@ -46,8 +46,9 @@ function compileTaskTemplate(title, tag, icon1, icon2, template) {
 function addTask(title, tag, columnName, icon1="fa-check-square", icon2="fa-arrow-up") {
     const task = compileTaskTemplate(title, tag, icon1, icon2, taskTemplate);
     const column = document.getElementById(columnName);
+    const tasksList = column.querySelector(".tasks-list")
 
-    column.appendChild(task);
+    tasksList.appendChild(task);
 
     const removeTaskButton = task.getElementsByClassName('removeTaskButton')[0]
     removeTaskButton.addEventListener('click', removeTask, {once: true})
@@ -298,3 +299,64 @@ darkThemeToggler.addEventListener('click', () => {
     darkThemeToggler.classList.contains('active') ? darkThemeToggle.off() : darkThemeToggle.on();
     darkThemeToggler.classList.toggle('active');
 })
+
+// Drag Task
+
+let dragged
+let initial_position
+
+document.addEventListener('dragstart', dragStart);
+document.addEventListener('dragenter', dragEnter);
+document.addEventListener('dragover', function(event) {
+    event.preventDefault();
+})
+document.addEventListener("drop", dropEnd);
+
+function dragStart(event) {
+    if(event.target.classList && event.target.classList.contains('task')) {
+        dragged = event.target
+        initial_position = {
+            parentNode: event.target.parentNode,
+            nextSibling: event.target.nextElementSibling
+        }
+
+        setTimeout(() => {
+            dragged.style.display = "none";
+        }, 0)
+    }
+}
+
+function dragEnter(event) {
+    event.preventDefault();
+    if(dragged) {
+        event.stopPropagation()
+        if (event.target.className === "task") {
+            event.target.parentNode.insertBefore(dragged, event.target.nextSibling);
+            dragged.style.display = "block";
+            dragged.style.visibility = "hidden";
+        } else if(event.target.classList.contains("column-header")) {
+            event.target.nextElementSibling.prepend(dragged)
+            dragged.style.display = "block";
+            dragged.style.visibility = "hidden";
+        } else if(event.target.classList.contains('board')) {
+            setTimeout(() => {
+                dragged.style.display = "none"
+            }, 0)
+        }
+    }
+}
+
+
+function dropEnd(event) {
+    if(dragged) {
+        event.preventDefault();
+        if(dragged.style.display === "none") {
+            dragged.style.display = "block";
+            initial_position.parentNode.insertBefore(dragged, initial_position.nextSibling)
+        } else {
+
+        }
+        dragged.style.visibility = 'visible';
+        dragged = null;
+    }
+}
