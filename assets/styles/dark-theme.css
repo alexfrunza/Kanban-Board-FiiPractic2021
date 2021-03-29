@@ -9,6 +9,22 @@
     --dark-theme-bright-green: #359440;
 }
 
+/*Scroll Bar*/
+.tasks-list::-webkit-scrollbar,
+.modal-guts .overflow::-webkit-scrollbar {
+    width: 0.5rem;
+}
+.tasks-list::-webkit-scrollbar-track,
+.modal-guts .overflow::-webkit-scrollbar {
+    -webkit-box-shadow: rgba(0,0,0,0);
+}
+.tasks-list::-webkit-scrollbar-thumb,
+.modal-guts .overflow::-webkit-scrollbar {
+    background-color: #2e4350;
+    border-radius: 0.5rem;
+}
+
+
 body {
     background-color: var(--dark-theme-bg-color);
     color: var(--dark-theme-text-color);
