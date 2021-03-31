@@ -11,18 +11,25 @@ body {
 }
 
 /*Scroll Bar*/
-.tasks-list::-webkit-scrollbar,
-.modal-guts .overflow::-webkit-scrollbar {
-    width: 0.5rem;
-}
 .tasks-list::-webkit-scrollbar-track,
-.modal-guts .overflow::-webkit-scrollbar {
-    -webkit-box-shadow: rgba(0,0,0,0);
-}
-.tasks-list::-webkit-scrollbar-thumb,
-.modal-guts .overflow::-webkit-scrollbar {
-    background-color: #bababa;
+.modal-guts .overflow::-webkit-scrollbar-track,
+#board::-webkit-scrollbar-track {
     border-radius: 0.5rem;
+}
+
+.tasks-list::-webkit-scrollbar,
+.modal-guts .overflow::-webkit-scrollbar,
+#board::-webkit-scrollbar {
+    width: 0.5rem;
+    height: 0.5rem;
+}
+
+.tasks-list::-webkit-scrollbar-thumb,
+.modal-guts .overflow::-webkit-scrollbar-thumb,
+#board::-webkit-scrollbar-thumb {
+    border-radius: 0.5rem;
+    height: 0.5rem;
+    background-color: #bfbfbf;
 }
 
 /* Utility classes */
@@ -134,6 +141,8 @@ aside .buttons-top button {
 /* MAIN */
 
 main {
+    overflow: hidden;
+    width: 100vw;
     margin-top: 3rem;
     padding: 2rem;
     flex-grow: 1;
@@ -187,8 +196,14 @@ main .container {
     align-items: start;
 }
 
+#board {
+    height: 76vh;
+    overflow-y: auto;
+}
+
 main > .container > section {
-    flex: 1;
+    flex-shrink: 0;
+    width: 300px;
     background-color: #f4f5f7;
     margin-right: 1rem;
     padding: 1rem 0.5rem;
@@ -210,6 +225,10 @@ main > .container > section:last-child {
 
 section .column-header {
     padding-bottom: 1.5rem;
+}
+
+#add-column {
+    background: none;
 }
 
 .task {
@@ -257,12 +276,16 @@ section .column-header {
 }
 
 main .users img:last-child {
-    margin-right: 1rem;
+    margin-right: 0.5rem;
 }
 
 /*For Tablets*/
 
 @media only screen and (max-width: 1000px) {
+    main > .container > section {
+        width: 100%;
+    }
+
     main {
         padding: 1.5rem;
     }
@@ -287,6 +310,10 @@ main .users img:last-child {
     main > .container > section {
         margin-right: 0;
         margin-bottom: 1rem;
+    }
+
+    #board {
+        height: 100%;
     }
 
 
