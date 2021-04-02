@@ -288,6 +288,10 @@ section .column-header {
     background-color: #e7e7e7;
 }
 
+.task:hover img.avatar {
+    border-color:  #e7e7e7;
+}
+
 .removeTaskButton,
 .removeColumnButton {
     font-size: 1rem;

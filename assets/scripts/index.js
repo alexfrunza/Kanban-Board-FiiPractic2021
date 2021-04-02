@@ -149,6 +149,12 @@ class TaskForm extends DomNode {
                     <option disabled selected value></option>
                     {column-options}
                 </select>
+                
+                <label for="owners">Assign this task to: </label>
+                <select name="owners" id="owners" required>
+                    <option disabled selected value></option>
+                    {owners-options}
+                </select>
                 <button class="button-reset btn btn-primary" name="submit" type="submit">Add task</button>
             </form>      
             </div>
@@ -181,9 +187,11 @@ class TaskForm extends DomNode {
 
     compileTemplate() {
         const columnOptions = this.getColumnOptions();
+        const ownersOptions = this.getOwnerOptions();
         const compiledTemplate = this.template
             .replace("{column-options}", columnOptions)
-            .replace("{name}", this.name);
+            .replace("{name}", this.name)
+            .replace('{owners-options}', ownersOptions);
         return this.compileToNode(compiledTemplate);
     }
 
@@ -196,6 +204,14 @@ class TaskForm extends DomNode {
         }, "")
     }
 
+    getOwnerOptions() {
+        return this.board.users.reduce((previousValue, currentValue) => {
+            const option = '<option value="{name}">{name}</option>'
+                .replaceAll('{name}', currentValue.username);
+            return previousValue.concat(option);
+        }, "")
+    }
+
     submitTask(event) {
         event.preventDefault();
 
@@ -204,11 +220,13 @@ class TaskForm extends DomNode {
         const type = target.querySelector('[name="type"]').value;
         const priority = target.querySelector('[name="priority"]').value;
         const columnId = target.querySelector('[name="column"]').value;
+        const ownerUsername = target.querySelector(`[name='owners']`).value;
 
+        const owner = this.board.getUserByUsername(ownerUsername);
         const column = this.board.getColumnById(columnId);
         const id = new Date().getTime();
 
-        const task = new Task(title, type, priority, column, id);
+        const task = new Task(title, type, priority, column, id, [owner]);
         column.addTask(task);
 
         this.close(event);
@@ -315,7 +333,7 @@ class Board extends DomNode {
         <h1 class="primary-header">{name}</h1>
         <div class="below-header">
             <div class="input-box">
-                <input autocomplete="off" type="text">
+                <input autocomplete="off" type="text" id="search">
                 <i class="fas fa-search white-icon"></i>
             </div>
             <div class="users">
@@ -358,8 +376,9 @@ class Board extends DomNode {
                         const title = task.title;
                         const type = task.type;
                         const id = task.id;
+                        const owners = task.owners;
 
-                        const newTask = new Task(title, type, priority, newColumn, id);
+                        const newTask = new Task(title, type, priority, newColumn, id, owners);
                         newColumn.addTask(newTask);
                     })
                 })
@@ -367,8 +386,27 @@ class Board extends DomNode {
             .then(() => {
                 this.show();
                 this.addColumnForm = new ColumnForm(this);
+                this.searchBar = this.node.querySelector('#search');
+                this.searchBar.addEventListener('input', this.search.bind(this));
                 document.getElementById('optionsToggler').disabled = false;
             })
+    }
+
+    search(event) {
+        this.columns.forEach((column) => {
+            column.tasks.forEach((task) => {
+                const owners = task.owners.map(owner => owner.username);
+
+                if(task.title.includes(this.searchBar.value)
+                    || task.type === this.searchBar.value.toLowerCase()
+                    || owners.includes(this.searchBar.value)
+                    || task.priority === this.searchBar.value.toLowerCase()) {
+                    task.node.style.display = 'block';
+                } else {
+                    task.node.style.display = 'none';
+                }
+            })
+        })
     }
 
     save() {
@@ -405,6 +443,14 @@ class Board extends DomNode {
         let result
         this.columns.forEach((column) => {
             if(column.id === id) result=column;
+        });
+        return result;
+    }
+
+    getUserByUsername(username) {
+        let result
+        this.users.forEach((user) => {
+            if(user.username === username) result=user;
         });
         return result;
     }
@@ -508,7 +554,7 @@ class Task extends DomNode {
         'urgent': 'red-icon',
     }
 
-    constructor(title, type, priority, column, id) {
+    constructor(title, type, priority, column, id, owners) {
         super()
         this.template = `
         <article class="task" draggable="true" id="{id}">
@@ -516,8 +562,7 @@ class Task extends DomNode {
         <h3 class="task-title">{title}</h3>
         <div class="task-details">
             <div class="users">
-                <img class="avatar" src="https://avatarfiles.alphacoders.com/226/thumb-1920-226760.jpg" alt="user avatar">
-                <img class="avatar" src="https://avatarfiles.alphacoders.com/226/thumb-1920-226760.jpg" alt="user avatar">
+                {owners-img}
             </div>
             <span class="tag">{type}</span>
             <i class="fas {task-type-icon} fa-2x margin-right-s"></i>
@@ -528,6 +573,7 @@ class Task extends DomNode {
         this.column = column;
         this.title = title;
         this.type = type;
+        this.owners = owners;
         this.priority = priority;
         this.id = this.column.id.concat(id);
         this.node = this.compileTemplate();
@@ -546,8 +592,18 @@ class Task extends DomNode {
             .replace("{title}", this.title)
             .replace("{type}", this.type)
             .replace("{task-type-icon}", this.taskTypeIcons[this.type])
-            .replace("{task-priority-color}", this.taskPriorityIcons[this.priority]);
+            .replace("{task-priority-color}", this.taskPriorityIcons[this.priority])
+            .replace('{owners-img}', this.getOwnersImg());
         return this.compileToNode(compiledTemplate);
+    }
+
+    getOwnersImg() {
+        return this.owners.reduce((previousValue, currentValue) => {
+            const photos = '<img class="avatar" src="{photo-url}" alt="{username}">'
+                .replace('{photo-url}', currentValue.photoUrl)
+                .replace('{username}', currentValue.username);
+            return previousValue.concat(photos);
+        }, "")
     }
 
     show() {
@@ -635,7 +691,8 @@ class Task extends DomNode {
             id: this.id,
             title: this.title,
             type: this.type,
-            priority: this.priority
+            priority: this.priority,
+            owners: this.owners
         }
     }
 }
@@ -648,17 +705,17 @@ const defaultBoard = {
         'users': [
             {
                 'id': 1,
-                'username': "localuser1",
+                'username': "homer",
                 'photoUrl': "https://avatarfiles.alphacoders.com/693/69306.jpg"
             },
             {
                 'id': 2,
-                'username': "localuser2",
+                'username': "peter",
                 'photoUrl': "https://avatarfiles.alphacoders.com/654/65454.png"
             },
             {
                 'id': 3,
-                'username': "localuser3",
+                'username': "brian",
                 'photoUrl': "https://avatarfiles.alphacoders.com/233/233054.jpg"
             }
         ],
@@ -672,7 +729,19 @@ const defaultBoard = {
                         title: "To make new tasks press options and then plus sign!",
                         type: "task",
                         priority: "medium",
-                        column: "backlog"
+                        column: "backlog",
+                        owners: [
+                            {
+                                'id': 1,
+                                'username': "homer",
+                                'photoUrl': "https://avatarfiles.alphacoders.com/693/69306.jpg"
+                            },
+                            {
+                                'id': 2,
+                                'username': "peter",
+                                'photoUrl': "https://avatarfiles.alphacoders.com/654/65454.png"
+                            }
+                        ]
                     }
                 ]
             },
