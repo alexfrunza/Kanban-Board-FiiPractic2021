@@ -233,7 +233,9 @@ main > .container > section:last-child {
     background: none;
 }
 
-#column-name-input {
+#column-name-input,
+#task-details input,
+#task-details select {
     display: block;
     border: 1px #ddd solid;
     border-radius: 1px;
@@ -241,7 +243,9 @@ main > .container > section:last-child {
     width: 200px;
 }
 
-#column-name-input:focus {
+#column-name-input:focus,
+#task-details input,
+#task-details select {
     outline-color: #2322a7;
 }
 
@@ -334,9 +338,65 @@ main .users img:last-child {
     color: #090959;
 }
 
+#task-details {
+    position: relative;
+    width: 400px;
+    min-width: 400px;
+    background: #d1e4ff;
+    margin-top: 3rem;
+    padding: 2rem;
+}
+
+#task-details .close-btn {
+    font-size: 1.5rem;
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+}
+
+#modify-task label {
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+}
+
+#modify-task label,
+#modify-task input,
+#modify-task select {
+    display: block;
+}
+
+#modify-task input,
+#modify-task select {
+    margin-bottom: 1rem;
+    width: 90%;
+}
+
+#modify-task .btn {
+    border: #2322a7 2px solid;
+}
+
+#modify-task .btn:hover {
+    background: #2322a7;
+    color: white;
+}
+
+
 /*For Tablets*/
 
 @media only screen and (max-width: 1000px) {
+    #task-details {
+        position: fixed;
+        min-width: 0;
+        width: 100%;
+        height: 100vh;
+        z-index: 100;
+    }
+
+    #modify-task input,
+    #modify-task select {
+        width: 100%;
+    }
+
     html {
         overflow: auto;
     }

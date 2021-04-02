@@ -100,12 +100,13 @@ main > .container > section {
     color: var(--dark-theme-bg-color);
 }
 
-#addColumnForm .submit-btn {
-    margin-left: 1rem;
+#addColumnForm .submit-btn,
+#modify-task .submit-btn {
     border-color: var(--dark-theme-bright-green);
 }
 
-#addColumnForm .submit-btn:hover {
+#addColumnForm .submit-btn:hover,
+#modify-task .submit-btn:hover {
     background: var(--dark-theme-bright-green);
 }
 
@@ -132,4 +133,8 @@ main .task:hover img.avatar {
 
 .modal-content {
     background-color: var(--dark-theme-primary-color);
+}
+
+#task-details {
+    background: #233240;
 }

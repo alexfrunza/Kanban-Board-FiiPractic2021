@@ -507,6 +507,7 @@ class TaskColumn extends DomNode {
     }
 
     remove() {
+        if(window.modifyTask) window.modifyTask.remove();
         const columnList = this.board.columns;
         const index = columnList.indexOf(this);
         columnList.splice(index, 1);
@@ -575,8 +576,12 @@ class Task extends DomNode {
         this.type = type;
         this.owners = owners;
         this.priority = priority;
+        this.details = new TaskDetails(this);
         this.id = this.column.id.concat(id);
         this.node = this.compileTemplate();
+
+        this.showDetails = () => {this.details.show();};
+        this.node.addEventListener('click', this.showDetails);
 
         this.node.addEventListener('dragstart', this.dragStart.bind(this));
         document.addEventListener('dragenter', this.dragEnter);
@@ -608,13 +613,28 @@ class Task extends DomNode {
 
     show() {
         const tasksList = this.column.node.querySelector(".tasks-list");
-        const removeTaskButton = this.node.querySelector('.removeTaskButton')
+        const removeTaskButton = this.node.querySelector('.removeTaskButton');
 
         tasksList.appendChild(this.node);
         removeTaskButton.addEventListener('click', this.remove.bind(this), {once: true})
     }
 
+    update() {
+        this.node = this.compileTemplate();
+
+        const tasksList = this.column.node.querySelector(".tasks-list");
+        const removeTaskButton = this.node.querySelector('.removeTaskButton');
+
+        tasksList.appendChild(this.node);
+        removeTaskButton.addEventListener('click', this.remove.bind(this), {once: true})
+
+        this.node.addEventListener('click', this.showDetails);
+        this.node.addEventListener('dragstart', this.dragStart.bind(this));
+    }
+
     remove(event, duration=500) {
+        if(event) event.stopPropagation();
+        if(window.modifyTask) window.modifyTask.remove();
         const taskList = this.column.tasks;
         const index = taskList.indexOf(this);
         taskList.splice(index, 1);
@@ -628,6 +648,7 @@ class Task extends DomNode {
     }
 
     dragStart(event) {
+        if(window.modifyTask) window.modifyTask.remove();
         window.taskDragged = this;
         window.initialPositionDragged = {
             parentNode: window.taskDragged.node.parentNode,
@@ -694,6 +715,130 @@ class Task extends DomNode {
             priority: this.priority,
             owners: this.owners
         }
+    }
+}
+
+class TaskDetails extends DomNode {
+    constructor(task) {
+        super();
+        this.task = task;
+        this.template = `
+<div id="task-details">
+        <button class="button-reset close-btn"><i class="fas fa-times"></i></button>
+        <form id="modify-task" action="" method="post">
+            <label for="title-modified">Title</label>
+            <input autocomplete="off" type="text" name="title-modified" id="title-modified" required>
+            
+            <label for="type-modified">Type</label>
+            <select name="type-modified" id="type-modified" required>
+                <option value="task">Task</option>
+                <option value="improvement">Improvement</option>
+                <option value="bug">Bug</option>
+            </select>
+            
+            <label for="priority-modified">Priority</label>
+            <select name="priority-modified" id="priority-modified" required>
+                <option value="low">Low</option>
+                <option value="medium">Medium</option>
+                <option value="high">High</option>
+                <option value="urgent">Urgent</option>
+            </select>
+            
+            <label for="column-modified">Column</label>
+            <select name="column-modified" id="column-modified" required>
+                {column-options}
+            </select>
+            
+            <label for="owners-modified">Assign this task to: </label>
+            <select name="owners-modified" id="owners-modified" required>
+                {owners-options}
+            </select>
+            
+            <button class="button-reset btn submit-btn">Modify task</button>
+        </form>
+</div>
+        `.trim();
+    }
+
+    getColumnsOptions() {
+        return this.task.column.board.columns.reduce((previousValue, currentValue) => {
+            const option = '<option value="{id}">{name}</option>'
+                .replace('{id}', currentValue.id)
+                .replace('{name}', currentValue.name);
+            return previousValue.concat(option);
+        }, "")
+    }
+
+    getOwnersOptions() {
+        return this.task.column.board.users.reduce((previousValue, currentValue) => {
+            const option = '<option value="{name}">{name}</option>'
+                .replaceAll('{name}', currentValue.username);
+            return previousValue.concat(option);
+        }, "")
+    }
+
+    compileTemplate() {
+        return this.compileToNode(this.template
+            .replace('{column-options}', this.getColumnsOptions())
+            .replace('{owners-options}', this.getOwnersOptions()));
+    }
+
+    show() {
+        if(window.modifyTask) window.modifyTask.remove();
+        this.node = this.compileTemplate();
+        window.modifyTask = this.node;
+        this.node.querySelector('#title-modified').value = this.task.title;
+        this.node.querySelector(`[value="${this.task.type}"]`).selected = true;
+        this.node.querySelector(`[value="${this.task.priority}"]`).selected = true;
+        this.node.querySelector(`[value="${this.task.owners[0].username}"]`).selected = true;
+        this.node.querySelector(`[value="${this.task.column.id}"]`).selected = true;
+        document.querySelector('.container').appendChild(this.node);
+
+        const closeBtn = this.node.querySelector('.close-btn');
+        const form = this.node.querySelector('#modify-task');
+
+        closeBtn.addEventListener('click', this.remove.bind(this));
+        form.addEventListener('submit', this.submit.bind(this));
+    }
+
+    submit(event) {
+        event.preventDefault();
+
+        const {target} = event;
+        this.task.title = target.querySelector('[name="title-modified"]').value;
+        this.task.type = target.querySelector('[name="type-modified"]').value;
+        this.task.priority = target.querySelector('[name="priority-modified"]').value;
+        const columnId = target.querySelector('[name="column-modified"]').value;
+        const ownerUsername = target.querySelector(`[name='owners-modified']`).value;
+
+        this.task.owners = [this.task.column.board.getUserByUsername(ownerUsername)];
+        const column = this.task.column.board.getColumnById(columnId);
+
+        const oldColumn = this.task.column;
+        if(oldColumn !== column) {
+            console.log('aaa');
+            column.tasks.push(this.task);
+            this.task.remove(event, 0);
+            this.task.column = column;
+            this.task.update();
+        } else {
+            const nextSib = this.task.node.nextElementSibling;
+            this.task.node.remove();
+            this.task.node = this.task.compileTemplate();
+            if(nextSib) oldColumn.node.querySelector(".tasks-list").insertBefore(this.task.node, nextSib);
+            else oldColumn.node.querySelector(".tasks-list").appendChild(this.task.node);
+
+            const removeTaskButton = this.task.node.querySelector('.removeTaskButton');
+            removeTaskButton.addEventListener('click', this.remove.bind(this.task), {once: true})
+            this.task.node.addEventListener('click', this.task.showDetails);
+            this.task.node.addEventListener('dragstart', this.task.dragStart.bind(this.task));
+        }
+
+        this.remove();
+    }
+
+    remove() {
+        this.node.remove();
     }
 }
 
