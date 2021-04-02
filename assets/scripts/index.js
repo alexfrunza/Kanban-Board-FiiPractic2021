@@ -54,6 +54,7 @@ class Aside extends DomNode {
     constructor(taskForm, board) {
         super();
         this.board = board;
+        this.taskForm = taskForm;
         this.template = `    
     <aside>
         <div class="buttons-top">
@@ -65,8 +66,7 @@ class Aside extends DomNode {
         this.aside = this.compileToNode(this.template);
         this.page = document.querySelector('.container');
         this.addTaskButton = this.aside.querySelector("#addTask");
-
-        this.taskForm = taskForm;
+        this.addTaskButton.addEventListener("click", this.taskForm.show.bind(this.taskForm))
 
         this.toggler = document.getElementById('optionsToggler');
         this.toggler.disabled = true;
@@ -90,12 +90,9 @@ class Aside extends DomNode {
             this.aside.remove();
             this.toggler.disabled = false;
         }
-
-        this.addTaskButton.removeEventListener("click", this.taskForm.show.bind(this.taskForm));
     }
 
     show() {
-        this.addTaskButton.addEventListener("click", this.taskForm.show.bind(this.taskForm));
         this.toggler.disabled = true;
         this.toggler.classList.add('active');
         this.board.node.animate([
@@ -163,21 +160,23 @@ class TaskForm extends DomNode {
     }
 
     show() {
-        this.form = this.compileTemplate();
-        this.closeButton = this.form.querySelector("#closeAddTaskForm");
+        this.node = this.compileTemplate();
+        this.closeButton = this.node.querySelector("#closeAddTaskForm");
+        this.closeButton = this.node.querySelector("#closeAddTaskForm");
         const addTaskButton = document.querySelector("#addTask");
         addTaskButton.disabled = true;
 
-        document.body.appendChild(this.form)
+        document.body.appendChild(this.node)
         this.container.style.overflow = 'hidden';
-        this.form.animate([
+        this.node.animate([
             {opacity: 0},
             {opacity: 1}
         ], 500).onfinish = () => {
-            this.form.addEventListener('click', this.close.bind(this));
-            this.closeButton.addEventListener('click', this.close.bind(this));
-            this.form.addEventListener('submit', this.submitTask.bind(this));
-        };
+
+            this.node.addEventListener('click', this.close.bind(this), {once: true});
+            this.closeButton.addEventListener('click', this.close.bind(this), {once: true});
+            this.node.addEventListener('submit', this.submitTask.bind(this), {once: true});
+        }
     }
 
     compileTemplate() {
@@ -207,8 +206,9 @@ class TaskForm extends DomNode {
         const columnId = target.querySelector('[name="column"]').value;
 
         const column = this.board.getColumnById(columnId);
+        const id = new Date().getTime();
 
-        const task = new Task(title, type, priority, column);
+        const task = new Task(title, type, priority, column, id);
         column.addTask(task);
 
         this.close(event);
@@ -216,23 +216,92 @@ class TaskForm extends DomNode {
 
     close(event) {
         if (event.target.parentNode === this.closeButton
-            || event.target === this.form
+            || event.target === this.node
             || event.type === "submit") {
 
-            this.form.removeEventListener('submit', this.submitTask.bind(this));
+            this.node.removeEventListener('submit', this.submitTask.bind(this));
             this.closeButton.removeEventListener('click', this.close.bind(this));
-            this.form.removeEventListener('click', this.close.bind(this));
+            this.node.removeEventListener('click', this.close.bind(this));
 
             this.container.style.overflow = 'auto';
-            this.form.animate([
+            this.node.animate([
                 {opacity: 1},
                 {opacity: 0}
             ], 500).onfinish = () => {
-                this.form.remove();
+                this.node.remove();
                 const addTaskButton = document.querySelector("#addTask");
                 addTaskButton.disabled = false;
             }
         }
+    }
+}
+
+class ColumnForm extends DomNode {
+    constructor(board) {
+        super();
+        this.board = board;
+        this.formTemplate = `
+<div>
+        <form id="addColumnForm" action="" method="post">
+            <label for="column-name-input">Column Name</label>
+            <input autocomplete="off" type="text" name="column-name-input" id="column-name-input" placeholder="Type a new for your column..." required>
+            <button class="button-reset btn close-btn">Close</button>
+            <button class="button-reset btn submit-btn">Add Column</button>
+        </form>
+</div>
+        `.trim();
+        this.column = document.querySelector('main > .container > section:last-child');
+        this.showFormBtn = this.compileToNode(`<button class="button-reset" id="showAddColumnForm">Add a column...</button>`);
+        this.form = this.compileTemplate();
+        this.closeBtn = this.form.querySelector('.close-btn');
+        this.submitBtn = this.form.querySelector('.submit-btn');
+
+        this.closeFormAction = (event) => {this.closeForm(event);};
+        this.submitColumnAction = (event) => {this.submitColumn(event);};
+
+        this.showFormBtn.addEventListener('click', this.showForm.bind(this), {once: true});
+
+        this.column.append(this.showFormBtn);
+
+    }
+
+    compileTemplate() {
+        return this.compileToNode(this.formTemplate);
+    }
+
+    showForm(event) {
+        if(this.column.contains(this.showFormBtn)) {
+            this.column.replaceChild(this.form, this.showFormBtn);
+            this.closeBtn.addEventListener('click', this.closeFormAction);
+            this.form.addEventListener('submit', this.submitColumnAction);
+        }
+    }
+
+    showButton(event) {
+        event.preventDefault();
+        if(this.column.contains(this.form)) {
+            this.closeBtn.removeEventListener('click', this.closeFormAction);
+            this.submitBtn.removeEventListener('click', this.submitColumnAction);
+            this.column.replaceChild(this.showFormBtn, this.form);
+            this.showFormBtn.addEventListener('click', this.showForm.bind(this), {once: true});
+        }
+    }
+
+    closeForm(event) {
+        event.preventDefault();
+        this.showButton(event);
+    }
+
+    submitColumn(event) {
+        event.preventDefault();
+
+        const columnName = this.form.querySelector('[name="column-name-input"]').value;
+
+        const column = new TaskColumn(columnName, this.board);
+        this.form.querySelector('[name="column-name-input"]').value = "";
+        this.board.addColumn(column);
+
+        this.showButton(event);
     }
 }
 
@@ -252,12 +321,13 @@ class Board extends DomNode {
             <div class="users">
             {user-avatars}
             </div>
-
             <button class="button-reset">Only My Issues</button>
+            <button class="button-reset fa-2x" id="saveBoard"><i class="fas fa-save"></i></button>
         </div>
         
         <div class="container board" id="board">
-            <section class="column" id="add-column">Add a column...</section>
+            <section class="column">
+            </section>
         </div>
 
     </main>`.trim();
@@ -272,6 +342,8 @@ class Board extends DomNode {
 
                 this.users = board.users;
                 this.node = this.compileTemplate();
+                this.saveButton = this.node.querySelector("#saveBoard");
+                this.saveButton.addEventListener('click', this.save.bind(this));
 
                 return board.columns;
             })
@@ -285,15 +357,22 @@ class Board extends DomNode {
                         const priority = task.priority;
                         const title = task.title;
                         const type = task.type;
+                        const id = task.id;
 
-                        const newTask = new Task(title, type, priority, newColumn);
+                        const newTask = new Task(title, type, priority, newColumn, id);
                         newColumn.addTask(newTask);
                     })
-
-                    document.getElementById('optionsToggler').disabled = false;
                 })
             })
-            .then(() => this.show())
+            .then(() => {
+                this.show();
+                this.addColumnForm = new ColumnForm(this);
+                document.getElementById('optionsToggler').disabled = false;
+            })
+    }
+
+    save() {
+        localStorage.setItem('board', this.toJson());
     }
 
     show() {
@@ -329,6 +408,19 @@ class Board extends DomNode {
         });
         return result;
     }
+
+    toJson() {
+        return JSON.stringify({
+            "board": {
+                id: this.id,
+                name: this.name,
+                users: this.users,
+                columns: this.columns.reduce((previousValue, currentValue) => {
+                    return previousValue.concat([currentValue.toObj()]);
+                }, [])
+            }
+        })
+    }
 }
 
 class TaskColumn extends DomNode {
@@ -337,6 +429,7 @@ class TaskColumn extends DomNode {
         this.board = board;
         this.template = `
             <section id="{id}" class="column">
+            <button class="button-reset removeColumnButton"><i class="fas fa-trash-alt"></i></button>
                 <h2 class="secondary-header column-header">{name}</h2>
                 <div class="tasks-list"></div>
             </section>`.trim();
@@ -344,7 +437,7 @@ class TaskColumn extends DomNode {
         this.id = name.replaceAll(" ", "-");
         this.tasks = [];
         this.node = this.compileTemplate()
-        this.addColumnNode = this.board.node.querySelector('#add-column');
+        this.addColumnNode = this.board.node.querySelector('main > .container > section:last-child');
     }
 
     compileTemplate() {
@@ -356,7 +449,10 @@ class TaskColumn extends DomNode {
 
     show() {
         const board = this.board.node.querySelector('#board');
+        const removeTaskButton = this.node.querySelector('.removeColumnButton')
+
         board.insertBefore(this.node, this.addColumnNode);
+        removeTaskButton.addEventListener('click', this.remove.bind(this), {once: true})
     }
 
     addTask(task) {
@@ -365,7 +461,36 @@ class TaskColumn extends DomNode {
     }
 
     remove() {
+        const columnList = this.board.columns;
+        const index = columnList.indexOf(this);
+        columnList.splice(index, 1);
 
+        const animation = this.node.animate([
+            {opacity: 1},
+            {opacity: 0}
+        ], 500);
+        animation.onfinish = () => {
+            this.tasks.forEach((task) => task.remove(0, 0));
+            this.node.remove();
+        }
+    }
+
+    getTaskById(id) {
+        let result
+        this.tasks.forEach((task) => {
+            if(task.id === id) {result=task;}
+        });
+        return result;
+    }
+
+    toObj() {
+        return {
+            id: this.id,
+            name: this.name,
+            tasks: this.tasks.reduce((previousValue, currentValue) => {
+                return previousValue.concat([currentValue.toObj()]);
+            }, [])
+        }
     }
 }
 
@@ -383,10 +508,10 @@ class Task extends DomNode {
         'urgent': 'red-icon',
     }
 
-    constructor(title, type, priority, column) {
+    constructor(title, type, priority, column, id) {
         super()
         this.template = `
-        <article class="task" draggable="true">
+        <article class="task" draggable="true" id="{id}">
         <button class="button-reset removeTaskButton"><i class="fas fa-trash-alt"></i></button>
         <h3 class="task-title">{title}</h3>
         <div class="task-details">
@@ -404,6 +529,7 @@ class Task extends DomNode {
         this.title = title;
         this.type = type;
         this.priority = priority;
+        this.id = this.column.id.concat(id);
         this.node = this.compileTemplate();
 
         this.node.addEventListener('dragstart', this.dragStart.bind(this));
@@ -416,6 +542,7 @@ class Task extends DomNode {
 
     compileTemplate() {
         const compiledTemplate = this.template
+            .replace("{id}", this.id)
             .replace("{title}", this.title)
             .replace("{type}", this.type)
             .replace("{task-type-icon}", this.taskTypeIcons[this.type])
@@ -431,44 +558,44 @@ class Task extends DomNode {
         removeTaskButton.addEventListener('click', this.remove.bind(this), {once: true})
     }
 
-    remove() {
-        const taskList = this.column.tasks
-        const index = taskList.indexOf(this)
+    remove(event, duration=500) {
+        const taskList = this.column.tasks;
+        const index = taskList.indexOf(this);
         taskList.splice(index, 1);
 
         const animation = this.node.animate([
                 {opacity: 1},
                 {opacity: 0}
-            ], 500
+            ], duration
         );
         animation.onfinish = this.node.remove.bind(this.node);
     }
 
     dragStart(event) {
-        window.taskDragged = this.node;
+        window.taskDragged = this;
         window.initialPositionDragged = {
-            parentNode: this.node.parentNode,
-            nextSibling: this.node.nextElementSibling
+            parentNode: window.taskDragged.node.parentNode,
+            nextSibling: window.taskDragged.node.nextElementSibling
         }
 
         setTimeout(() => {
-            window.taskDragged.style.display = "none";
+            window.taskDragged.node.style.display = "none";
         }, 0)
     }
 
     dragEnter(event) {
         event.preventDefault();
         if (event.target.classList.contains('task')) {
-            event.target.parentNode.insertBefore( window.taskDragged, event.target.nextSibling);
-            window.taskDragged.style.display = "block";
-            window.taskDragged.style.visibility = "hidden";
+            event.target.parentNode.insertBefore( window.taskDragged.node, event.target.nextSibling);
+            window.taskDragged.node.style.display = "block";
+            window.taskDragged.node.style.visibility = "hidden";
         } else if(event.target.classList.contains("column-header")) {
-            event.target.nextElementSibling.prepend( window.taskDragged)
-            window.taskDragged.style.display = "block";
-            window.taskDragged.style.visibility = "hidden";
+            event.target.nextElementSibling.prepend( window.taskDragged.node)
+            window.taskDragged.node.style.display = "block";
+            window.taskDragged.node.style.visibility = "hidden";
         } else if(event.target.classList.contains('board')) {
             setTimeout(() => {
-                window.taskDragged.style.display = "none"
+                window.taskDragged.node.style.display = "none"
             }, 0)
         }
     }
@@ -476,35 +603,62 @@ class Task extends DomNode {
     dropEnd(event) {
         if(window.taskDragged) {
             event.preventDefault();
-            if(window.taskDragged.style.display === "none") {
-                window.taskDragged.style.display = "block";
-                window.initialPositionDragged.parentNode.insertBefore(window.taskDragged, window.initialPositionDragged.nextSibling)
+            if(window.taskDragged.node.style.display === "none") {
+                window.taskDragged.node.style.display = "block";
+                window.initialPositionDragged.parentNode.insertBefore(window.taskDragged.node, window.initialPositionDragged.nextSibling)
+            } else {
+                const newColumnId = window.taskDragged.node.parentNode.parentNode.id;
+                const newColumn = window.taskDragged.column.board.getColumnById(newColumnId);
+
+                const taskBefore = window.taskDragged.node.previousElementSibling;
+                const oldColumn = window.taskDragged.column.tasks;
+                const index = oldColumn.indexOf(window.taskDragged);
+                oldColumn.splice(index, 1);
+                window.taskDragged.column = newColumn;
+
+                if(taskBefore) {
+                    const indexTaskBefore = newColumn.tasks.indexOf(newColumn.getTaskById(taskBefore.id));
+                    newColumn.tasks.splice(indexTaskBefore+1, 0, window.taskDragged);
+                } else {
+                    newColumn.tasks.unshift(window.taskDragged);
+                }
+
+                window.taskDragged.column = newColumn;
             }
-            window.taskDragged.style.visibility = 'visible';
+            window.taskDragged.node.style.visibility = 'visible';
             window.taskDragged = null;
+        }
+    }
+
+    toObj() {
+        return {
+            id: this.id,
+            title: this.title,
+            type: this.type,
+            priority: this.priority
         }
     }
 }
 
 
-const board = {
+const defaultBoard = {
     "board": {
         'id': "1",
-        'name': "Primul meu kanban board",
+        'name': "New kanban board",
         'users': [
             {
                 'id': 1,
-                'username': "alexfrunza",
+                'username': "localuser1",
                 'photoUrl': "https://avatarfiles.alphacoders.com/693/69306.jpg"
             },
             {
                 'id': 2,
-                'username': "alex",
+                'username': "localuser2",
                 'photoUrl': "https://avatarfiles.alphacoders.com/654/65454.png"
             },
             {
                 'id': 3,
-                'username': "alex123",
+                'username': "localuser3",
                 'photoUrl': "https://avatarfiles.alphacoders.com/233/233054.jpg"
             }
         ],
@@ -515,67 +669,41 @@ const board = {
                 tasks: [
                     {
                         id: "1",
-                        title: "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Excepturi, quaerat!",
+                        title: "To make new tasks press options and then plus sign!",
                         type: "task",
                         priority: "medium",
                         column: "backlog"
-                    },
-                    {
-                        id: "2",
-                        title: "Lorem ipsum dolor sit amet.",
-                        type: "improvement",
-                        priority: "urgent",
-                        column: "backlog",
                     }
                 ]
             },
             {
                 id: "2",
                 name: "Selected for Development",
-                tasks: [
-                    {
-                        id: "3",
-                        title: "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Excepturi, quaerat!",
-                        type: "bug",
-                        priority: "low",
-                        column: "Selected for Development",
-                    },
-                ]
+                tasks: []
             },
             {
                 id: "3",
                 name: "In progress",
-                tasks: [
-                    {
-                        id: "4",
-                        title: "Lorem ipsum dolor.",
-                        type: "bug",
-                        priority: "high",
-                        column: "In progress",
-                    },
-                ]
+                tasks: []
             },
             {
                 id: "4",
                 name: "Done",
-                tasks: [
-                    {
-                        id: "5",
-                        title: "Lorem ipsum dolor.",
-                        type: "bug",
-                        priority: "high",
-                        column: "In progress",
-                    },
-                ]
+                tasks: []
             },
         ]
     }
 }
-const dataFromServer = JSON.stringify(board)
+const defaultBoardJson = JSON.stringify(defaultBoard)
 const fakeFetch = new Promise((resolve, reject) => {
-    setTimeout(() => {
-        resolve(dataFromServer);
-    }, 1000);
+    const localData = localStorage.getItem('board');
+    if(localData) {
+        resolve(localData);
+    } else {
+        setTimeout(() => {
+            resolve(defaultBoardJson);
+        }, 1000);
+    }
 });
 
 const mainPage = new MainPage()

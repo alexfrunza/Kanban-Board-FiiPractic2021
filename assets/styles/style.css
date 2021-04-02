@@ -10,6 +10,10 @@ body {
     line-height: 1.5rem;
 }
 
+html {
+    overflow: hidden;
+}
+
 /*Scroll Bar*/
 .tasks-list::-webkit-scrollbar-track,
 .modal-guts .overflow::-webkit-scrollbar-track,
@@ -38,6 +42,7 @@ body {
 }
 
 .primary-header {
+    line-height: 1.5;
     font-size: 2rem;
 }
 
@@ -78,7 +83,7 @@ img.avatar-m {
 }
 
 .btn {
-    padding: 0.5rem 1rem;
+    padding: 0.25rem 0.5rem;
     border-radius: 5px;
 }
 
@@ -192,6 +197,10 @@ main .below-header .users img {
     margin-right: -1rem;
 }
 
+#saveBoard {
+    margin-left: 1rem;
+}
+
 main .container {
     align-items: start;
 }
@@ -221,14 +230,47 @@ main > .container > section .tasks-list {
 
 main > .container > section:last-child {
     margin-right: 0;
+    background: none;
+}
+
+#column-name-input {
+    display: block;
+    border: 1px #ddd solid;
+    border-radius: 1px;
+    padding: 0.5rem;
+    width: 200px;
+}
+
+#column-name-input:focus {
+    outline-color: #2322a7;
+}
+
+#addColumnForm button {
+    margin-top: 1rem;
+}
+
+#addColumnForm .close-btn {
+    background: none;
+    border: #4949F2 2px solid;
+}
+
+#addColumnForm .close-btn:hover {
+    background: #4949F2;
+    color: #ffffff;
+}
+
+#addColumnForm .submit-btn {
+    margin-left: 1rem;
+    border: #2322a7 2px solid;
+}
+
+#addColumnForm .submit-btn:hover {
+    background: #2322a7;
+    color: #ffffff;
 }
 
 section .column-header {
     padding-bottom: 1.5rem;
-}
-
-#add-column {
-    background: none;
 }
 
 .task {
@@ -246,7 +288,8 @@ section .column-header {
     background-color: #e7e7e7;
 }
 
-.removeTaskButton {
+.removeTaskButton,
+.removeColumnButton {
     font-size: 1rem;
     position: absolute;
     right: 0.75rem;
@@ -279,9 +322,21 @@ main .users img:last-child {
     margin-right: 0.5rem;
 }
 
+#showAddColumnForm {
+    color: #4949F2;
+}
+
+#showAddColumnForm:hover {
+    color: #090959;
+}
+
 /*For Tablets*/
 
 @media only screen and (max-width: 1000px) {
+    html {
+        overflow: auto;
+    }
+
     main > .container > section {
         width: 100%;
     }

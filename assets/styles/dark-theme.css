@@ -83,6 +83,33 @@ main > .container > section {
     background-color: var(--dark-theme-column-color);
 }
 
+#showAddColumnForm {
+    color: var(--dark-theme-dark-green);
+}
+
+#showAddColumnForm:hover {
+    color: var(--dark-theme-bright-green);
+}
+
+#addColumnForm .close-btn {
+    border-color: var(--dark-theme-text-color);
+}
+
+#addColumnForm .close-btn:hover {
+    background: var(--dark-theme-text-color);
+    color: var(--dark-theme-bg-color);
+}
+
+#addColumnForm .submit-btn {
+    margin-left: 1rem;
+    border-color: var(--dark-theme-bright-green);
+}
+
+#addColumnForm .submit-btn:hover {
+    background: var(--dark-theme-bright-green);
+}
+
+
 main .task {
     background-color: var(--dark-theme-task-color);
 }
