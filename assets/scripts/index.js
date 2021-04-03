@@ -816,7 +816,6 @@ class TaskDetails extends DomNode {
 
         const oldColumn = this.task.column;
         if(oldColumn !== column) {
-            console.log('aaa');
             column.tasks.push(this.task);
             this.task.remove(event, 0);
             this.task.column = column;
@@ -916,7 +915,7 @@ const fakeFetch = new Promise((resolve, reject) => {
     } else {
         setTimeout(() => {
             resolve(defaultBoardJson);
-        }, 1000);
+        }, 0);
     }
 });
 
