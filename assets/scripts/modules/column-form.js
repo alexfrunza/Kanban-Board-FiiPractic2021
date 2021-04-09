@@ -9,7 +9,7 @@ class ColumnForm extends DomNode {
 <div>
         <form id="addColumnForm" action="" method="post">
             <label for="column-name-input">Column Name</label>
-            <input autocomplete="off" type="text" name="column-name-input" id="column-name-input" placeholder="Type a new for your column..." required>
+            <input autocomplete="off" type="text" name="column-name-input" id="column-name-input" placeholder="Type a name for your column..." required>
             <button class="button-reset btn close-btn">Close</button>
             <button class="button-reset btn submit-btn">Add Column</button>
         </form>
@@ -54,6 +54,7 @@ class ColumnForm extends DomNode {
 
     closeForm(event) {
         event.preventDefault();
+        this.form.querySelector('[name="column-name-input"]').value = "";
         this.showButton(event);
     }
 
