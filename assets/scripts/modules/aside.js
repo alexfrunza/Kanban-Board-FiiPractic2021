@@ -10,6 +10,7 @@ class Aside extends DomNode {
         <div class="buttons-top">
             <button class="button-reset"><label for="search"><i class="fas fa-search white-icon"></label></i></button>
             <button class="button-reset" id="addTask"><i class="fas fa-plus white-icon"></i></button>
+            <button class="button-reset" id="delete-board"><i class="far fa-trash-alt white-icon"></i></button>
         </div>
         <img class="avatar" src="https://avatarfiles.alphacoders.com/693/69306.jpg" alt="user avatar">
     </aside>`.trim();

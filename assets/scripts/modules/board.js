@@ -11,9 +11,10 @@ class Board extends DomNode {
     usersLink = `https://6069d729e1c2a10017544fc4.mockapi.io/api/v1/users`;
     taskLink = `https://6069d729e1c2a10017544fc4.mockapi.io/api/v1/boards/{board-id}/columns/{column-id}/tasks/{task-id}`;
 
-    constructor(id) {
+    constructor(id, mainPage) {
         super();
         this.id = id;
+        this.mainPage = mainPage;
         this.boardLink = this.boardLink.replace('{board-id}', this.id);
         this.columnsLink = this.columnsLink.replace('{board-id}', this.id);
         this.columnLink = this.columnLink.replace('{board-id}', this.id);
@@ -167,6 +168,13 @@ class Board extends DomNode {
                 }, [])
             }
         })
+    }
+
+    remove() {
+        this.columns.forEach((column) => {
+            column.remove(null, 0);
+        })
+        fetch(this.boardLink, {method: 'DELETE'}).then()
     }
 }
 

@@ -44,6 +44,7 @@ class TaskForm extends DomNode {
                     <option disabled selected value></option>
                     {owners-options}
                 </select>
+                <p class="error red-icon"></p>
                 <button class="button-reset btn btn-primary" name="submit" type="submit">Add task</button>
             </form>      
             </div>
@@ -109,6 +110,13 @@ class TaskForm extends DomNode {
         const {target} = event;
 
         const title = target.querySelector('[name="title"]').value;
+
+        if(!title.trim()) {
+            target.querySelector('.error').innerText = "Title can't be blank!";
+            target.querySelector('[name="title"]').value = "";
+            return;
+        }
+
         const type = target.querySelector('[name="type"]').value;
         const priority = target.querySelector('[name="priority"]').value;
         const columnId = target.querySelector('[name="column"]').value;
@@ -143,6 +151,7 @@ class TaskForm extends DomNode {
             || event.target === this.node
             || event.type === "submit") {
 
+            this.node.querySelector('.error').innerText = "";
             this.node.removeEventListener('submit', this.submitTask);
             this.closeButton.removeEventListener('click', this.close);
             this.node.removeEventListener('click', this.close);

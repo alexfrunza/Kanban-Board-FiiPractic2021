@@ -19,6 +19,14 @@ class MainPage extends DomNode {
         this.asideToggle = () => {
             this.aside.toggler.classList.contains('active') ? this.aside.remove() : this.aside.show();
         }
+        this.hideBoard = () => {
+            this.backButton.removeEventListener('click', this.hideBoard);
+            this.board.node.remove();
+            this.aside.remove(0);
+            if(window.modifyTask) window.modifyTask.remove();
+            this.aside.toggler.removeEventListener('click', this.asideToggle);
+            this.showSelectBoard();
+        }
 
         this.showSelectBoard();
     }
@@ -36,25 +44,25 @@ class MainPage extends DomNode {
         boardId || (boardId = this.selectBoard.node.querySelector('[name="boards"]').value);
         this.selectBoard.node.remove();
 
-        this.board = new Board(boardId);
+        this.board = new Board(boardId, this);
         this.taskForm = new TaskForm(this.board);
         this.aside = new Aside(this.taskForm, this.board);
 
         document.querySelector('#optionsToggler').style.display = 'inline-block';
         this.backButton.style.display = 'inline-block';
         this.aside.toggler.addEventListener('click', this.asideToggle);
-        this.backButton.addEventListener('click', () => {
-            this.board.node.remove();
-            this.aside.remove(0);
-            if(window.modifyTask) window.modifyTask.remove();
-            this.aside.toggler.removeEventListener('click', this.asideToggle);
-            this.showSelectBoard();
-        }, {once: true});
+        this.backButton.addEventListener('click', this.hideBoard);
     }
 
     async createBoard(event) {
         event.preventDefault();
         const boardName = this.selectBoard.node.querySelector('[name="name"]').value;
+
+        if(!boardName.trim()) {
+            this.selectBoard.node.querySelector('.error').innerText = "Name can't be blank!";
+            this.selectBoard.node.querySelector('[name="name"]').value = "";
+            return;
+        }
 
         const response = await fetch(this.boardsLink,
             {method: 'POST',

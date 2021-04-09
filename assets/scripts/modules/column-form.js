@@ -9,7 +9,8 @@ class ColumnForm extends DomNode {
 <div>
         <form id="addColumnForm" action="" method="post">
             <label for="column-name-input">Column Name</label>
-            <input autocomplete="off" type="text" name="column-name-input" id="column-name-input" placeholder="Type a new for your column..." required>
+            <input autocomplete="off" type="text" name="column-name-input" id="column-name-input" placeholder="Type a name for your column..." required>
+            <p class="error red-icon"></p>
             <button class="button-reset btn close-btn">Close</button>
             <button class="button-reset btn submit-btn">Add Column</button>
         </form>
@@ -54,6 +55,8 @@ class ColumnForm extends DomNode {
 
     closeForm(event) {
         event.preventDefault();
+        this.form.querySelector('[name="column-name-input"]').value = "";
+        this.form.querySelector('.error').innerText = "";
         this.showButton(event);
     }
 
@@ -61,6 +64,12 @@ class ColumnForm extends DomNode {
         event.preventDefault();
 
         const columnName = this.form.querySelector('[name="column-name-input"]').value;
+
+        if(!columnName.trim()) {
+            this.form.querySelector('.error').innerText = "Name can't be blank!";
+            this.form.querySelector('[name="column-name-input"]').value = "";
+            return;
+        }
 
         const response = await fetch(this.board.columnsLink,
             {method: 'POST',
@@ -72,6 +81,7 @@ class ColumnForm extends DomNode {
 
         const column = new TaskColumn(columnName, body.id, this.board);
         this.form.querySelector('[name="column-name-input"]').value = "";
+        this.form.querySelector('.error').innerText = "";
         this.board.addColumn(column);
 
         this.showButton(event);

@@ -30,6 +30,7 @@ class SelectBoard extends DomNode {
         <form id="create-board" action="" method="post">
             <label for="name">Name</label>
             <input autocomplete="off" type="text" name="name" id="name" required>
+            <p class="error red-icon"></p>
             <button class="button-reset btn">Create</button>
         </form>
         
@@ -79,6 +80,7 @@ class SelectBoard extends DomNode {
         if(this.node) this.node.remove();
         this.node = this.compileCreateBoardTemplate();
         this.form = this.node.querySelector('form');
+        this.node.querySelector('.error').innerText = "";
 
         this.form.addEventListener('submit', this.mainPage.createBoard.bind(this.mainPage), {once: true});
 
@@ -86,7 +88,7 @@ class SelectBoard extends DomNode {
         selectBoardBtn.addEventListener('click', this.showSelectBoard.bind(this), {once: true});
 
         this.parentNode.appendChild(this.node);
-}
+    }
 }
 
 export {SelectBoard}
