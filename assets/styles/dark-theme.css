@@ -97,12 +97,13 @@ main > .container > section {
 }
 
 #addColumnForm .close-btn {
-    border-color: var(--dark-theme-text-color);
+    border-color: var(--dark-theme-text-color) !important;
+    background: none !important;
 }
 
 #addColumnForm .close-btn:hover {
-    background: var(--dark-theme-text-color);
-    color: var(--dark-theme-bg-color);
+    background: var(--dark-theme-text-color) !important;
+    color: var(--dark-theme-bg-color) !important;
 }
 
 #addColumnForm .submit-btn,
