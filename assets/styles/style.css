@@ -100,6 +100,10 @@ img.avatar-m {
     background: #2322a7;
 }
 
+p.error {
+    margin-top: 0.5rem;
+    margin-bottom: 0.25rem;
+}
 
 /* NAVBAR */
 

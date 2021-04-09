@@ -42,7 +42,7 @@ class TaskColumn extends DomNode {
         task.show();
     }
 
-    remove() {
+    remove(event, duration=500) {
         if(window.modifyTask) window.modifyTask.remove();
         const columnList = this.board.columns;
         const index = columnList.indexOf(this);
@@ -51,7 +51,7 @@ class TaskColumn extends DomNode {
         const animation = this.node.animate([
             {opacity: 1},
             {opacity: 0}
-        ], 500);
+        ], duration);
         animation.onfinish = () => {
             this.tasks.forEach((task) => {
                 task.remove(0, 0);
