@@ -17,20 +17,23 @@ html {
 /*Scroll Bar*/
 .tasks-list::-webkit-scrollbar-track,
 .modal-guts .overflow::-webkit-scrollbar-track,
-#board::-webkit-scrollbar-track {
+#board::-webkit-scrollbar-track,
+#modify-task::-webkit-scrollbar-track {
     border-radius: 0.5rem;
 }
 
 .tasks-list::-webkit-scrollbar,
 .modal-guts .overflow::-webkit-scrollbar,
-#board::-webkit-scrollbar {
+#board::-webkit-scrollbar,
+#modify-task::-webkit-scrollbar {
     width: 0.5rem;
     height: 0.5rem;
 }
 
 .tasks-list::-webkit-scrollbar-thumb,
 .modal-guts .overflow::-webkit-scrollbar-thumb,
-#board::-webkit-scrollbar-thumb {
+#board::-webkit-scrollbar-thumb,
+#modify-task::-webkit-scrollbar-thumb {
     border-radius: 0.5rem;
     height: 0.5rem;
     background-color: #bfbfbf;
@@ -143,6 +146,10 @@ aside .buttons-top button {
     margin-top: 1rem;
 }
 
+aside button label {
+    cursor: pointer;
+}
+
 /* MAIN */
 
 main {
@@ -207,7 +214,7 @@ main .container {
 
 #board {
     height: 76vh;
-    overflow-y: auto;
+    overflow-y: hidden;
 }
 
 main > .container > section {
@@ -224,7 +231,7 @@ main > .container > section {
 main > .container > section .tasks-list {
     overflow: auto;
     max-height: 65vh;
-    padding: 0 0.25rem;
+    padding: 0.25rem 0.25rem;
     position: relative;
 }
 
@@ -235,7 +242,9 @@ main > .container > section:last-child {
 
 #column-name-input,
 #task-details input,
-#task-details select {
+#task-details select,
+#waiting select,
+#create-board input {
     display: block;
     border: 1px #ddd solid;
     border-radius: 1px;
@@ -244,8 +253,10 @@ main > .container > section:last-child {
 }
 
 #column-name-input:focus,
-#task-details input,
-#task-details select {
+#task-details input:focus,
+#task-details select:focus,
+#waiting input:focus,
+#waiting select:focus {
     outline-color: #2322a7;
 }
 
@@ -285,6 +296,15 @@ section .column-header {
     margin-bottom: 1rem;
     border-radius: 2px;
     flex-basis: 25%;
+}
+
+.task.selected {
+    background-color: #e7e7e7;
+    box-shadow: 0 0 6px rgb(150, 150, 150);
+}
+
+.task.selected img.avatar {
+    border-color:  #e7e7e7;
 }
 
 .task:hover {
@@ -350,8 +370,8 @@ main .users img:last-child {
 #task-details .close-btn {
     font-size: 1.5rem;
     position: absolute;
-    top: 1rem;
-    right: 1rem;
+    top: 0.75rem;
+    right: 0.75rem;
 }
 
 #modify-task label {
@@ -371,19 +391,41 @@ main .users img:last-child {
     width: 90%;
 }
 
-#modify-task .btn {
+#modify-task .btn,
+#waiting .btn {
     border: #2322a7 2px solid;
 }
 
-#modify-task .btn:hover {
+#modify-task .btn:hover,
+#waiting .btn:hover {
     background: #2322a7;
     color: white;
 }
 
 
+.removeTaskButton {
+    visibility: hidden;
+}
+
+.task:hover .removeTaskButton {
+    visibility: visible;
+}
+
+section > .removeColumnButton {
+    visibility: hidden;
+}
+
+section:hover > .removeColumnButton {
+    visibility: visible;
+}
+
 /*For Tablets*/
 
 @media only screen and (max-width: 1000px) {
+    section > .removeColumnButton {visibility: visible;}
+
+    .removeTaskButton {visibility: visible;}
+
     #task-details {
         position: fixed;
         min-width: 0;
@@ -435,12 +477,26 @@ main .users img:last-child {
         height: 100%;
     }
 
+    #task-details {
+        padding-bottom: 4rem;
+    }
+
+    #modify-task {
+        padding: 1rem;
+        overflow-y: auto;
+        height: 100%;
+    }
+
 
 }
 
 /*For Mobile*/
 
-@media only screen and (max-width: 550px)  {
+@media only screen and (max-width: 550px){
+    .form-container {
+        min-width: 0;
+    }
+
     nav > * {
         margin-right: 1rem;
     }
@@ -451,6 +507,12 @@ main .users img:last-child {
 
     main .below-header input {
         font-size: 1rem;
+    }
+}
+
+@media only screen and (max-height: 769px) and (min-width: 1000px) {
+    main.board {
+        margin-top: 1.25rem;
     }
 }
 
