@@ -8,9 +8,9 @@
     <link rel="preconnect" href="https://fonts.gstatic.com">
     <link rel="preconnect" href="https://fonts.gstatic.com">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="assets/styles/select-board.css">
     <link rel="stylesheet" href="assets/styles/style.css">
     <link rel="stylesheet" href="assets/styles/addTaskForm.css">
-<!--    <link rel="stylesheet" href="assets/styles/dark-theme.css">-->
     <script src="https://kit.fontawesome.com/93647f5727.js" crossorigin="anonymous"></script>
     <title>Kanban Board</title>
 </head>
@@ -18,11 +18,13 @@
 
 <nav>
     <i class="fab fa-pied-piper white-icon logo"></i>
+    <button class="button-reset white-icon" id="backToSelect"><i class="fas fa-arrow-left"></i></button>
     <button class="button-reset white-icon" id="optionsToggler"><i class="fas fa-cog"></i> Options</button>
     <button class="button-reset white-icon" id="themeToggler"><i class="fas fa-moon"></i> Night Mode</button>
 </nav>
 
 <div class="container">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/uuid/8.3.2/uuid.min.js" integrity="sha512-UNM1njAgOFUa74Z0bADwAq8gbTcqZC8Ej4xPSzpnh0l6KMevwvkBvbldF9uR++qKeJ+MOZHRjV1HZjoRvjDfNQ==" crossorigin="anonymous"></script>
     <script type="module" src="assets/scripts/index.js"></script>
 </div>
 </body>

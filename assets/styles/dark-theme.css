@@ -7,21 +7,26 @@
     --dark-theme-input-color: #18232d;
     --dark-theme-dark-green: #27553e;
     --dark-theme-bright-green: #359440;
+    --dark-theme-task-selected-bg: #11586d;
 }
 
 /*Scroll Bar*/
 .tasks-list::-webkit-scrollbar,
-.modal-guts .overflow::-webkit-scrollbar {
+.modal-guts .overflow::-webkit-scrollbar,
+#board::-webkit-scrollbar,
+#modify-task::-webkit-scrollbar {
     width: 0.5rem;
 }
 .tasks-list::-webkit-scrollbar-track,
 .modal-guts .overflow::-webkit-scrollbar-track,
-#board::-webkit-scrollbar-track  {
+#board::-webkit-scrollbar-track,
+#modify-task::-webkit-scrollbar-track {
     -webkit-box-shadow: rgba(0,0,0,0);
 }
 .tasks-list::-webkit-scrollbar-thumb,
 .modal-guts .overflow::-webkit-scrollbar-thumb,
-#board::-webkit-scrollbar-thumb {
+#board::-webkit-scrollbar-thumb,
+#modify-task::-webkit-scrollbar-thumb {
     background-color: #2e4350;
     border-radius: 0.5rem;
 }
@@ -46,13 +51,13 @@ nav .logo {
 }
 
 .btn {
-    background-color: var(--dark-theme-dark-green);
-    border: 1px var(--dark-theme-bright-green) solid;
-    color: #d7fbff;
+    background-color: var(--dark-theme-dark-green) !important;
+    border: 1px var(--dark-theme-bright-green) solid !important;
+    color: #d7fbff !important;
 }
 
 .btn:hover {
-    background-color: var(--dark-theme-bright-green);
+    background-color: var(--dark-theme-bright-green) !important;
 }
 
 input,
@@ -119,6 +124,17 @@ main .task img.avatar {
     border-color: var(--dark-theme-task-color);
 }
 
+.task.selected,
+.task.selected:hover {
+    background-color: var(--dark-theme-task-selected-bg);
+    box-shadow: 0 0 6px rgb(0,255,255);
+}
+
+.task.selected img.avatar,
+.task.selected:hover img.avatar {
+    border-color:  var(--dark-theme-task-selected-bg);
+}
+
 main .task:hover {
     background-color: #1b3645;
 }
@@ -137,4 +153,9 @@ main .task:hover img.avatar {
 
 #task-details {
     background: #233240;
+}
+
+.form-container {
+    background: var(--dark-theme-primary-color);
+    box-shadow: rgba(0, 0, 0, 0.3) 0 0 0 1px;
 }
