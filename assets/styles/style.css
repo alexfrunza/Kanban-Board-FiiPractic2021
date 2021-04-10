@@ -101,7 +101,7 @@ img.avatar-m {
 }
 
 p.error {
-    margin-top: 0.5rem;
+    margin-top: 0.25rem;
     margin-bottom: 0.25rem;
 }
 
@@ -273,24 +273,28 @@ main > .container > section:last-child {
     margin-top: 1rem;
 }
 
-#addColumnForm .close-btn {
+.close-btn {
     background: none;
     border: #4949F2 2px solid;
 }
 
-#addColumnForm .close-btn:hover {
+.close-btn:hover {
     background: #4949F2;
     color: #ffffff;
 }
 
-#addColumnForm .submit-btn {
+.submit-btn {
     margin-left: 1rem;
     border: #2322a7 2px solid;
 }
 
-#addColumnForm .submit-btn:hover {
+.submit-btn:hover {
     background: #2322a7;
     color: #ffffff;
+}
+
+#modify-task .submit-btn {
+    margin-left: 0;
 }
 
 section .column-header {
@@ -376,7 +380,7 @@ main .users img:last-child {
     padding: 2rem;
 }
 
-#task-details .close-btn {
+#task-details .btn-close {
     font-size: 1.5rem;
     position: absolute;
     top: 0.75rem;
@@ -427,6 +431,21 @@ section > .removeColumnButton {
 section:hover > .removeColumnButton {
     visibility: visible;
 }
+
+.delete-confirmation-task,
+.delete-confirmation-column {
+    background: #bcbcbc;
+    padding: 0.5rem;
+    margin-bottom: 0.5rem;
+    display: none;
+}
+
+.delete-confirmation-task .btn,
+.delete-confirmation-column .btn {
+    margin-top: 0.25rem;
+    margin-bottom: 0.25rem;
+}
+
 
 /*For Tablets*/
 
