@@ -6,7 +6,7 @@ class TaskDetails extends DomNode {
         this.task = task;
         this.template = `
 <div id="task-details">
-        <button class="button-reset close-btn"><i class="fas fa-times"></i></button>
+        <button class="button-reset btn-close"><i class="fas fa-times"></i></button>
         <form id="modify-task" action="" method="post">
             <label for="title-modified">Title</label>
             <input autocomplete="off" type="text" name="title-modified" id="title-modified" required>
@@ -36,6 +36,7 @@ class TaskDetails extends DomNode {
                 {owners-options}
             </select>
             
+            <p class="error red-icon"></p>
             <button class="button-reset btn submit-btn">Modify task</button>
         </form>
 </div>
@@ -76,6 +77,7 @@ class TaskDetails extends DomNode {
 
             if(window.modifyTask) window.modifyTask.remove();
             this.node = this.compileTemplate();
+            this.node.querySelector('.error').innerText = "";
             window.modifyTask = this;
             this.node.querySelector('#title-modified').value = this.task.title;
             this.node.querySelector(`[value="${this.task.type}"]`).selected = true;
@@ -84,7 +86,7 @@ class TaskDetails extends DomNode {
             this.node.querySelector(`[value="${this.task.column.dbId}"]`).selected = true;
             document.querySelector('.container').appendChild(this.node);
 
-            const closeBtn = this.node.querySelector('.close-btn');
+            const closeBtn = this.node.querySelector('.btn-close');
             const form = this.node.querySelector('#modify-task');
             closeBtn.addEventListener('click', this.remove);
             form.addEventListener('submit', this.submit);
@@ -95,7 +97,14 @@ class TaskDetails extends DomNode {
         event.preventDefault();
 
         const {target} = event;
-        this.task.title = target.querySelector('[name="title-modified"]').value;
+        let title = target.querySelector('[name="title-modified"]').value;
+        if(!title.trim()) {
+            target.querySelector('.error').innerText = "Title can't be blank";
+            title = "";
+            return;
+        }
+
+        this.task.title = title;
         this.task.type = target.querySelector('[name="type-modified"]').value;
         this.task.priority = target.querySelector('[name="priority-modified"]').value;
         const columnId = target.querySelector('[name="column-modified"]').value;
@@ -126,7 +135,7 @@ class TaskDetails extends DomNode {
             this.task.dbId = body.id;
             this.task.column = column;
             this.task.taskLink = this.task.column.taskLink.replace("{task-id}", body.id);
-            this.task.update();
+            setTimeout(()=>{this.task.update();}, 0);
         } else {
             const response = await fetch(this.task.taskLink, {
                 method: "PUT",
@@ -161,7 +170,7 @@ class TaskDetails extends DomNode {
         if(window.screen.width < 1000) document.querySelector('html').style.overflow = 'auto';
         this.task.node.classList.remove('selected');
 
-        const closeBtn = this.node.querySelector('.close-btn');
+        const closeBtn = this.node.querySelector('.btn-close');
         const form = this.node.querySelector('#modify-task');
         closeBtn.addEventListener('click', this.remove);
         form.addEventListener('submit', this.submit);

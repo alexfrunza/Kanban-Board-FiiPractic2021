@@ -21,6 +21,11 @@ class Task extends DomNode {
         <article class="task" draggable="true" id="{id}">
         <button class="button-reset removeTaskButton"><i class="fas fa-trash-alt"></i></button>
         <h3 class="task-title">{title}</h3>
+        <div class="delete-confirmation-task">
+            <p>Are you sure you want to delete this task?</p>
+            <button class="button-reset btn close-btn">Cancel</button>
+            <button class="button-reset btn submit-btn">Delete Task</button>
+        </div>
         <div class="task-details">
             <div class="users">
                 {owners-img}
@@ -51,6 +56,22 @@ class Task extends DomNode {
             event.preventDefault();
         });
         document.addEventListener('drop', this.dropEnd);
+        this.deleteTask = (event) => {
+            this._hideDeleteConfirmation();
+            this.remove(event);
+            this.delete();
+        };
+        this.hideDeleteConfirmation = (event) => {
+            event.stopPropagation();
+            if(event.target.classList.contains('close-btn')
+                || !document.getElementById(this.id).contains(event.target)) {
+                this._hideDeleteConfirmation();
+            }
+        };
+        this.showDeleteConfirmation = (event) => {
+            event.stopPropagation();
+            this._showDeleteConfirmation();
+        };
     }
 
     compileTemplate() {
@@ -78,10 +99,7 @@ class Task extends DomNode {
         const removeTaskButton = this.node.querySelector('.removeTaskButton');
 
         tasksList.appendChild(this.node);
-        removeTaskButton.addEventListener('click', (event) => {
-            this.remove(event);
-            this.delete();
-        }, {once: true})
+        removeTaskButton.addEventListener('click', this.showDeleteConfirmation);
     }
 
     update() {
@@ -91,11 +109,7 @@ class Task extends DomNode {
         const removeTaskButton = this.node.querySelector('.removeTaskButton');
 
         tasksList.appendChild(this.node);
-        removeTaskButton.addEventListener('click', (event) => {
-            this.remove(event);
-            this.delete();
-            }, {once: true})
-
+        removeTaskButton.addEventListener('click', this.showDeleteConfirmation);
         this.node.addEventListener('click', this.showDetails);
         this.node.addEventListener('dragstart', this.dragStart.bind(this));
     }
@@ -112,7 +126,11 @@ class Task extends DomNode {
                 {opacity: 0}
             ], duration
         );
-        animation.onfinish = this.node.remove.bind(this.node);
+        animation.onfinish = () => {
+            const removeTaskButton = this.node.querySelector('.removeTaskButton');
+            removeTaskButton.removeEventListener('click', this.showDeleteConfirmation);
+            this.node.remove();
+        }
     }
 
     delete() {
@@ -139,7 +157,7 @@ class Task extends DomNode {
             window.taskDragged.node.style.display = "block";
             window.taskDragged.node.style.visibility = "hidden";
         } else if(event.target.classList.contains("column-header")) {
-            event.target.nextElementSibling.prepend( window.taskDragged.node)
+            event.target.nextElementSibling.nextElementSibling.prepend( window.taskDragged.node)
             window.taskDragged.node.style.display = "block";
             window.taskDragged.node.style.visibility = "hidden";
         } else if(event.target.classList.contains('board')) {
@@ -200,7 +218,24 @@ class Task extends DomNode {
         }
     }
 
-    async save() {
+    _showDeleteConfirmation() {
+        const div = this.node.querySelector('.delete-confirmation-task');
+        div.style.display = 'block';
+        const deleteBtn = div.querySelector('.submit-btn');
+        const closeBtn = div.querySelector('.close-btn');
+        deleteBtn.addEventListener('click', this.deleteTask);
+        closeBtn.addEventListener('click', this.hideDeleteConfirmation);
+        document.addEventListener('click', this.hideDeleteConfirmation);
+    }
+
+    _hideDeleteConfirmation() {
+        const div = this.node.querySelector('.delete-confirmation-task');
+        div.style.display = 'none';
+        const deleteBtn = div.querySelector('.submit-btn');
+        const closeBtn = div.querySelector('.close-btn');
+        deleteBtn.removeEventListener('click', this.deleteTask);
+        closeBtn.removeEventListener('click', this.hideDeleteConfirmation);
+        document.removeEventListener('click', this.hideDeleteConfirmation);
     }
 
     toObj() {

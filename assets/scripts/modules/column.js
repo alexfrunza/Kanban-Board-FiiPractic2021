@@ -11,8 +11,13 @@ class TaskColumn extends DomNode {
         this.taskLink = this.board.taskLink.replace("{column-id}", this.dbId);
         this.template = `
             <section id="{id}" class="column">
-            <button class="button-reset removeColumnButton"><i class="fas fa-trash-alt"></i></button>
+                <button class="button-reset removeColumnButton"><i class="fas fa-trash-alt"></i></button>
                 <h2 class="secondary-header column-header">{name}</h2>
+                <div class="delete-confirmation-column">
+                    <p>Are you sure you want to delete this column?</p>
+                    <button class="button-reset btn close-btn">Cancel</button>
+                    <button class="button-reset btn submit-btn">Delete Column</button>
+                </div>
                 <div class="tasks-list"></div>
             </section>`.trim();
         this.name = name;
@@ -20,6 +25,21 @@ class TaskColumn extends DomNode {
         this.tasks = [];
         this.node = this.compileTemplate()
         this.addColumnNode = this.board.node.querySelector('main > .container > section:last-child');
+        this.showDeleteConfirmation = (event) => {
+            event.stopPropagation();
+            this._showDeleteConfirmation();
+        };
+        this.hideDeleteConfirmation = (event) => {
+            event.stopPropagation();
+            if(event.target.classList.contains('close-btn')
+                || !document.getElementById(this.id).contains(event.target)) {
+                this._hideDeleteConfirmation();
+            }
+        };
+        this.remove = (event, duration=500) => {
+            this._hideDeleteConfirmation();
+            this._remove(event, duration);
+        };
     }
 
     compileTemplate() {
@@ -31,10 +51,10 @@ class TaskColumn extends DomNode {
 
     show() {
         const board = this.board.node.querySelector('#board');
-        const removeTaskButton = this.node.querySelector('.removeColumnButton')
+        const removeColumnButton = this.node.querySelector('.removeColumnButton')
 
         board.insertBefore(this.node, this.addColumnNode);
-        removeTaskButton.addEventListener('click', this.remove.bind(this), {once: true})
+        removeColumnButton.addEventListener('click', this.showDeleteConfirmation)
     }
 
     addTask(task) {
@@ -42,7 +62,7 @@ class TaskColumn extends DomNode {
         task.show();
     }
 
-    remove(event, duration=500) {
+    _remove(event, duration=500) {
         if(window.modifyTask) window.modifyTask.remove();
         const columnList = this.board.columns;
         const index = columnList.indexOf(this);
@@ -54,8 +74,7 @@ class TaskColumn extends DomNode {
         ], duration);
         animation.onfinish = () => {
             this.tasks.forEach((task) => {
-                task.remove(0, 0);
-                task.delete();
+                task.deleteTask();
             });
             fetch(this.columnLink, {method: 'DELETE'}).then()
             this.node.remove();
@@ -78,6 +97,26 @@ class TaskColumn extends DomNode {
                 return previousValue.concat([currentValue.toObj()]);
             }, [])
         }
+    }
+
+    _showDeleteConfirmation() {
+        const div = this.node.querySelector('.delete-confirmation-column');
+        div.style.display = 'block';
+        const deleteBtn = div.querySelector('.submit-btn');
+        const closeBtn = div.querySelector('.close-btn');
+        deleteBtn.addEventListener('click', this.remove);
+        closeBtn.addEventListener('click', this.hideDeleteConfirmation);
+        document.addEventListener('click', this.hideDeleteConfirmation);
+    }
+
+    _hideDeleteConfirmation() {
+        const div = this.node.querySelector('.delete-confirmation-column');
+        div.style.display = 'none';
+        const deleteBtn = div.querySelector('.submit-btn');
+        const closeBtn = div.querySelector('.close-btn');
+        deleteBtn.removeEventListener('click', this.remove);
+        closeBtn.removeEventListener('click', this.hideDeleteConfirmation);
+        document.removeEventListener('click', this.hideDeleteConfirmation);
     }
 }
 
