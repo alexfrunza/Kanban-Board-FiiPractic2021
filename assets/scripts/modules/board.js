@@ -41,10 +41,12 @@ class Board extends DomNode {
         </div>
 
     </main>`.trim();
-        this.show().then()
+        this.show().then();
+        this.search = () => {this._search();};
+        this.remove = () => {this.mainPage.aside.hideDeleteBoardConfirmation();this._remove();};
     }
 
-    search(event) {
+    _search(event) {
         this.columns.forEach((column) => {
             column.tasks.forEach((task) => {
                 const owners = task.owners.map(owner => owner.username);
@@ -108,7 +110,7 @@ class Board extends DomNode {
         container.prepend(this.node);
         this.addColumnForm = new ColumnForm(this);
         this.searchBar = this.node.querySelector('#search');
-        this.searchBar.addEventListener('input', this.search.bind(this));
+        this.searchBar.addEventListener('input', this.search);
         document.getElementById('optionsToggler').disabled = false;
     }
 
@@ -170,11 +172,18 @@ class Board extends DomNode {
         })
     }
 
-    remove() {
-        this.columns.forEach((column) => {
-            column.remove(null, 0);
+    _remove() {
+        this.searchBar.removeEventListener('input', this.search);
+
+        const removeColumns = this.columns.map((column) => {
+            return column.remove(null, 0);
         })
-        fetch(this.boardLink, {method: 'DELETE'}).then()
+        Promise.all(removeColumns).then(() => {
+            return fetch(this.boardLink, {method: 'DELETE'});
+        })
+            .then(() => {
+                this.mainPage.hideBoard();
+            })
     }
 }
 

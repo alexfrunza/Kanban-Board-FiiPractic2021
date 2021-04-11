@@ -107,6 +107,9 @@ class TaskForm extends DomNode {
     async _submitTask(event) {
         event.preventDefault();
 
+        const submitBtn = this.node.querySelector(`[name="submit"]`);
+        submitBtn.disabled = true;
+
         const {target} = event;
 
         const title = target.querySelector('[name="title"]').value;
@@ -142,6 +145,7 @@ class TaskForm extends DomNode {
 
         const task = new Task(title, type, priority, column, body.id, [owner]);
         column.addTask(task);
+
 
         this.close(event);
     }
