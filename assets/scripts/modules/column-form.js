@@ -37,6 +37,7 @@ class ColumnForm extends DomNode {
 
     showForm(event) {
         if(this.column.contains(this.showFormBtn)) {
+            this.submitBtn.disabled = false;
             this.column.replaceChild(this.form, this.showFormBtn);
             this.closeBtn.addEventListener('click', this.closeFormAction);
             this.form.addEventListener('submit', this.submitColumnAction);
@@ -70,6 +71,8 @@ class ColumnForm extends DomNode {
             this.form.querySelector('[name="column-name-input"]').value = "";
             return;
         }
+
+        this.submitBtn.disabled = true;
 
         const response = await fetch(this.board.columnsLink,
             {method: 'POST',

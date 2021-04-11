@@ -58,6 +58,7 @@ html {
 }
 
 .secondary-header {
+    word-break: break-word;
     color: #5d6985;
     font-size: 0.75rem;
 }
@@ -310,7 +311,8 @@ main > .container > section:last-child {
 }
 
 section .column-header {
-    display: inline-block;
+    margin-right: 2rem;
+    display: block;
     border: 2px solid rgba(0,0,0,0);
     margin-bottom: 1.5rem;
 }

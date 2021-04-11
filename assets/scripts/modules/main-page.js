@@ -64,6 +64,10 @@ class MainPage extends DomNode {
             return;
         }
 
+        this.selectBoard.node.querySelector('#create-board .btn').disabled = true;
+        if(this.selectBoard.form) this.selectBoard.form.removeEventListener('submit', this.createBoard);
+        if(this.selectBoard.selectBoardBtn) this.selectBoard.selectBoardBtn.removeEventListener('click', this.showSelectBoard);
+
         const response = await fetch(this.boardsLink,
             {method: 'POST',
                 headers: {

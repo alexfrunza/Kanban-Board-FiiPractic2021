@@ -45,8 +45,6 @@ class SelectBoard extends DomNode {
             this.mainPage.showBoard(event);
         };
         this.createBoard = (event) => {
-            if(this.form) this.form.removeEventListener('submit', this.createBoard);
-            if(this.selectBoardBtn) this.selectBoardBtn.removeEventListener('click', this.showSelectBoard);
             this.mainPage.createBoard(event);
         };
         this.showCreateBoard = () => {
@@ -103,6 +101,7 @@ class SelectBoard extends DomNode {
         this.selectBoardBtn = this.node.querySelector('#select-board');
 
         this.form.addEventListener('submit', this.createBoard);
+        this.form.querySelector('.btn').disabled = false;
         this.selectBoardBtn.addEventListener('click', this.showSelectBoard);
 
         this.parentNode.appendChild(this.node);
