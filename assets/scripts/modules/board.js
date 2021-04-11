@@ -44,6 +44,9 @@ class Board extends DomNode {
         this.show().then();
         this.search = () => {this._search();};
         this.remove = () => {this.mainPage.aside.hideDeleteBoardConfirmation();this._remove();};
+        this.modifyName = () => {this._modifyName();};
+        this.saveName = (event) => {this._saveName(event);};
+        this.hideInput = (event) => {this._hideInput(event);};
     }
 
     _search(event) {
@@ -81,6 +84,8 @@ class Board extends DomNode {
             })
         }
         this.node = this.compileTemplate();
+        this.header = this.node.querySelector('.primary-header');
+        this.header.addEventListener('click', this.modifyName);
 
         response = await fetch(this.columnsLink)
         let columns = await response.json();
@@ -170,6 +175,47 @@ class Board extends DomNode {
                 }, [])
             }
         })
+    }
+
+    _modifyName() {
+        this.inputTemplate = `<input autocomplete="off" type="text" id="change-board-name">`;
+        this.input = this.compileToNode(this.inputTemplate);
+        this.input.value = this.name;
+        this.node.replaceChild(this.input, this.header);
+        this.input.select();
+        this.header.removeEventListener('click', this.modifyName);
+        this.input.addEventListener('keypress', this.saveName);
+        document.addEventListener('click', this.hideInput);
+    }
+
+    _hideInput(event) {
+        if(!event || (event.target !== this.header && event.target !== this.input)) {
+            this.input.removeEventListener('keypress', this.saveName);
+            document.removeEventListener('click', this.hideInput);
+            this.header = this.compileToNode(`<h1 class="primary-header">${this.name}</h1>`);
+
+            this.node.replaceChild(this.header, this.input);
+            this.header.addEventListener('click', this.modifyName);
+        }
+    }
+
+    _saveName(event) {
+        if(event.key === "Enter") {
+            if(this.input.value.trim()) {
+                this.name = this.input.value;
+
+                fetch(this.boardLink, {
+                    method: "PUT",
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        name: this.name
+                    })
+                });
+            }
+            this.hideInput();
+        }
     }
 
     _remove() {
