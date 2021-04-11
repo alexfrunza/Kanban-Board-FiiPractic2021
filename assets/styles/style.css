@@ -45,8 +45,16 @@ html {
 }
 
 .primary-header {
+    border: 2px rgba(0,0,0,0) solid;
+    display: inline-block;
     line-height: 1.5;
     font-size: 2rem;
+    word-break: break-word;
+}
+
+.primary-header:hover,
+.column-header:hover {
+    border: 2px yellow dashed;
 }
 
 .secondary-header {
@@ -253,7 +261,9 @@ main > .container > section:last-child {
 #task-details input,
 #task-details select,
 #waiting select,
-#create-board input {
+#create-board input,
+#change-board-name,
+#change-column-name {
     display: block;
     border: 1px #ddd solid;
     border-radius: 1px;
@@ -265,7 +275,9 @@ main > .container > section:last-child {
 #task-details input:focus,
 #task-details select:focus,
 #waiting input:focus,
-#waiting select:focus {
+#waiting select:focus,
+#change-board-name:focus,
+#change-column-name:focus {
     outline-color: #2322a7;
 }
 
@@ -298,7 +310,14 @@ main > .container > section:last-child {
 }
 
 section .column-header {
-    padding-bottom: 1.5rem;
+    display: inline-block;
+    border: 2px solid rgba(0,0,0,0);
+    margin-bottom: 1.5rem;
+}
+
+#change-column-name {
+    margin-bottom: 1.5rem;
+    padding: 0.5rem;
 }
 
 .task {
@@ -459,6 +478,11 @@ section:hover > .removeColumnButton {
     background: #fff;
     padding: 1rem;
     border-radius: 2px;
+}
+
+#change-board-name {
+    margin: 1rem 0;
+    font-size: 2rem;
 }
 
 /*For Tablets*/
