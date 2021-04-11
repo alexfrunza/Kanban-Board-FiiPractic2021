@@ -40,6 +40,9 @@ class TaskColumn extends DomNode {
             this._hideDeleteConfirmation();
             return this._remove(event, duration);
         };
+        this.modifyName = () => {this._modifyName();};
+        this.saveName = (event) => {this._saveName(event);};
+        this.hideInput = (event) => {this._hideInput(event);};
     }
 
     compileTemplate() {
@@ -52,6 +55,8 @@ class TaskColumn extends DomNode {
     show() {
         const board = this.board.node.querySelector('#board');
         const removeColumnButton = this.node.querySelector('.removeColumnButton')
+        this.header = this.node.querySelector('.secondary-header');
+        this.header.addEventListener('click', this.modifyName);
 
         board.insertBefore(this.node, this.addColumnNode);
         removeColumnButton.addEventListener('click', this.showDeleteConfirmation)
@@ -98,6 +103,47 @@ class TaskColumn extends DomNode {
             tasks: this.tasks.reduce((previousValue, currentValue) => {
                 return previousValue.concat([currentValue.toObj()]);
             }, [])
+        }
+    }
+
+    _modifyName() {
+        this.inputTemplate = `<input autocomplete="off" type="text" id="change-column-name">`;
+        this.input = this.compileToNode(this.inputTemplate);
+        this.input.value = this.name;
+        this.node.replaceChild(this.input, this.header);
+        this.input.select();
+        this.header.removeEventListener('click', this.modifyName);
+        this.input.addEventListener('keypress', this.saveName);
+        document.addEventListener('click', this.hideInput);
+    }
+
+    _hideInput(event) {
+        if(!event || (event.target !== this.header && event.target !== this.input)) {
+            this.input.removeEventListener('keypress', this.saveName);
+            document.removeEventListener('click', this.hideInput);
+            this.header = this.compileToNode(`<h2 class="secondary-header column-header">${this.name}</h2>`);
+
+            this.node.replaceChild(this.header, this.input);
+            this.header.addEventListener('click', this.modifyName);
+        }
+    }
+
+    _saveName(event) {
+        if(event.key === "Enter") {
+            if(this.input.value.trim()) {
+                this.name = this.input.value;
+
+                fetch(this.columnLink, {
+                    method: "PUT",
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        name: this.name
+                    })
+                });
+            }
+            this.hideInput();
         }
     }
 
