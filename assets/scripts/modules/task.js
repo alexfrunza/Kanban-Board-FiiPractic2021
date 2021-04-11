@@ -59,7 +59,7 @@ class Task extends DomNode {
         this.deleteTask = (event) => {
             this._hideDeleteConfirmation();
             this.remove(event);
-            this.delete();
+            return this.delete();
         };
         this.hideDeleteConfirmation = (event) => {
             event.stopPropagation();
@@ -134,7 +134,7 @@ class Task extends DomNode {
     }
 
     delete() {
-        fetch(this.taskLink, {method: 'DELETE'}).then()
+        return fetch(this.taskLink, {method: 'DELETE'});
     }
 
     dragStart(event) {

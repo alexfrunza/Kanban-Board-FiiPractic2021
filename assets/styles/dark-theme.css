@@ -168,25 +168,33 @@ main .task:hover img.avatar {
 }
 
 .delete-confirmation-task > .close-btn,
-.delete-confirmation-column > .close-btn {
+.delete-confirmation-column > .close-btn,
+.delete-confirmation-board > .close-btn {
     border-color: var(--dark-theme-text-color) !important;
     color: var(--dark-theme-text-color) !important;
     background: none !important;
 }
 
 .delete-confirmation-task > .close-btn:hover,
-.delete-confirmation-column > .close-btn:hover {
+.delete-confirmation-column > .close-btn:hover,
+.delete-confirmation-board > .close-btn:hover {
     border-color: #fff !important;
     color: #fff !important;
 }
 
 .delete-confirmation-task > .submit-btn,
-.delete-confirmation-column > .submit-btn {
+.delete-confirmation-column > .submit-btn,
+.delete-confirmation-board > .submit-btn {
     border-color: #b64e54 !important;
     background: none !important;
 }
 
 .delete-confirmation-task > .submit-btn:hover,
-.delete-confirmation-column > .submit-btn:hover {
+.delete-confirmation-column > .submit-btn:hover,
+.delete-confirmation-board > .submit-btn:hover {
     background: #b64e54 !important;
+}
+
+.delete-confirmation-board {
+    background-color: var(--dark-theme-primary-color);
 }

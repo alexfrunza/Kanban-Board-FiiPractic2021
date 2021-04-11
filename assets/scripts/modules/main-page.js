@@ -20,8 +20,8 @@ class MainPage extends DomNode {
             this.aside.toggler.classList.contains('active') ? this.aside.remove() : this.aside.show();
         }
         this.hideBoard = () => {
-            this.backButton.removeEventListener('click', this.hideBoard);
             this.board.node.remove();
+            this.backButton.removeEventListener('click', this.hideBoard);
             this.aside.remove(0);
             if(window.modifyTask) window.modifyTask.remove();
             this.aside.toggler.removeEventListener('click', this.asideToggle);
@@ -36,7 +36,7 @@ class MainPage extends DomNode {
         this.backButton =  document.querySelector('#backToSelect');
         this.backButton.style.display = 'none';
         this.selectBoard = new SelectBoard(this);
-        this.selectBoard.showSelectBoard().then()
+        this.selectBoard.showSelectBoard();
     }
 
     showBoard(event, boardId) {

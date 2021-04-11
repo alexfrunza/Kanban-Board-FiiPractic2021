@@ -39,6 +39,26 @@ class SelectBoard extends DomNode {
 </main>
         `.trim();
         this.parentNode = document.querySelector('.container');
+        this.showBoard = (event) => {
+            if(this.form) this.form.addEventListener('submit', this.showBoard);
+            if(this.createBoardBtn) this.createBoardBtn.addEventListener('click', this.showCreateBoard);
+            this.mainPage.showBoard(event);
+        };
+        this.createBoard = (event) => {
+            if(this.form) this.form.removeEventListener('submit', this.createBoard);
+            if(this.selectBoardBtn) this.selectBoardBtn.removeEventListener('click', this.showSelectBoard);
+            this.mainPage.createBoard(event);
+        };
+        this.showCreateBoard = () => {
+            if(this.form) this.form.addEventListener('submit', this.showBoard);
+            if(this.createBoardBtn) this.createBoardBtn.addEventListener('click', this.showCreateBoard);
+            this._showCreateBoard();
+        };
+        this.showSelectBoard = () => {
+            if(this.form) this.form.removeEventListener('submit', this.createBoard);
+            if(this.selectBoardBtn) this.selectBoardBtn.removeEventListener('click', this.showSelectBoard);
+            this._showSelectBoard();
+        };
     }
 
     async compileSelectBoardTemplate() {
@@ -63,29 +83,27 @@ class SelectBoard extends DomNode {
         }, "");
     }
 
-    async showSelectBoard() {
+    async _showSelectBoard() {
         if(this.node) this.node.remove();
         this.node = await this.compileSelectBoardTemplate();
         this.form = this.node.querySelector('form');
+        this.createBoardBtn = this.node.querySelector('#create-new-board');
 
-        this.form.addEventListener('submit', this.mainPage.showBoard.bind(this.mainPage), {once: true});
+        this.form.addEventListener('submit', this.showBoard);
+        this.createBoardBtn.addEventListener('click', this.showCreateBoard);
 
-        const createBoardBtn = this.node.querySelector('#create-new-board');
-        createBoardBtn.addEventListener('click', this.showCreateBoard.bind(this), {once: true});
-
-        this.parentNode.appendChild(this.node);
+        setTimeout(() => {this.parentNode.appendChild(this.node);}, 0);
     }
 
-    showCreateBoard() {
+    _showCreateBoard() {
         if(this.node) this.node.remove();
         this.node = this.compileCreateBoardTemplate();
         this.form = this.node.querySelector('form');
         this.node.querySelector('.error').innerText = "";
+        this.selectBoardBtn = this.node.querySelector('#select-board');
 
-        this.form.addEventListener('submit', this.mainPage.createBoard.bind(this.mainPage), {once: true});
-
-        const selectBoardBtn = this.node.querySelector('#select-board');
-        selectBoardBtn.addEventListener('click', this.showSelectBoard.bind(this), {once: true});
+        this.form.addEventListener('submit', this.createBoard);
+        this.selectBoardBtn.addEventListener('click', this.showSelectBoard);
 
         this.parentNode.appendChild(this.node);
     }

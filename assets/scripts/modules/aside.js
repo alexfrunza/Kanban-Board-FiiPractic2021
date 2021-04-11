@@ -14,10 +14,27 @@ class Aside extends DomNode {
         </div>
         <img class="avatar" src="https://avatarfiles.alphacoders.com/693/69306.jpg" alt="user avatar">
     </aside>`.trim();
+        this.deleteBoardConfirmationTemplate = `
+        <div class="modal">
+            <div class="modal-content" id="delete-board-confirmation">
+                <div class="modal-guts">
+                    <div class="delete-confirmation-board">
+                        <p>Are you sure you want to delete this board?</p>
+                        <button class="button-reset btn close-btn">Cancel</button>
+                        <button class="button-reset btn submit-btn">Delete Board</button>
+                    </div>  
+                </div>
+            </div>
+        </div>
+        `.trim();
+        this.deleteBoardConfirmation = this.compileToNode(this.deleteBoardConfirmationTemplate);
         this.aside = this.compileToNode(this.template);
         this.page = document.querySelector('.container');
         this.addTaskButton = this.aside.querySelector("#addTask");
-        this.addTaskButton.addEventListener("click", this.taskForm.show.bind(this.taskForm))
+        this.deleteBoardButton = this.aside.querySelector('#delete-board');
+        this.showTaskForm = () => {this.taskForm.show();};
+        this.deleteBoard = () => {this._showDeleteBoardConfirmation();};
+        this.hideDeleteBoardConfirmation = () => {this._hideDeleteBoardConfirmation();};
 
         this.toggler = document.getElementById('optionsToggler');
         this.toggler.disabled = true;
@@ -26,6 +43,8 @@ class Aside extends DomNode {
     remove(duration=500) {
         this.toggler.disabled = true;
         this.toggler.classList.remove('active');
+        this.addTaskButton.removeEventListener("click", this.showTaskForm);
+        this.deleteBoardButton.removeEventListener('click', this.deleteBoard);
 
         this.board.node.animate([
             {marginLeft: '3rem'},
@@ -46,6 +65,9 @@ class Aside extends DomNode {
     show() {
         this.toggler.disabled = true;
         this.toggler.classList.add('active');
+        this.addTaskButton.addEventListener("click", this.showTaskForm);
+        this.deleteBoardButton.addEventListener('click', this.deleteBoard);
+
         this.board.node.animate([
             {marginLeft: "0"},
             {marginLeft: '3rem'}
@@ -60,6 +82,22 @@ class Aside extends DomNode {
             this.toggler.disabled = false;
         }
         this.page.prepend(this.aside);
+    }
+
+    _showDeleteBoardConfirmation() {
+        document.body.appendChild(this.deleteBoardConfirmation);
+        const deleteBtn = this.deleteBoardConfirmation.querySelector('.submit-btn');
+        const closeBtn = this.deleteBoardConfirmation.querySelector('.close-btn');
+        closeBtn.addEventListener('click', this.hideDeleteBoardConfirmation);
+        deleteBtn.addEventListener('click', this.board.remove);
+    }
+
+    _hideDeleteBoardConfirmation() {
+        this.deleteBoardConfirmation.remove();
+        const deleteBtn = this.deleteBoardConfirmation.querySelector('.submit-btn');
+        const closeBtn = this.deleteBoardConfirmation.querySelector('.close-btn');
+        deleteBtn.removeEventListener('click', this.board.remove);
+        closeBtn.removeEventListener('click', this.hideDeleteBoardConfirmation);
     }
 }
 

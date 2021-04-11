@@ -446,6 +446,20 @@ section:hover > .removeColumnButton {
     margin-bottom: 0.25rem;
 }
 
+#delete-board-confirmation {
+    background: none !important;
+    height: 0;
+}
+
+#delete-board-confirmation .modal-guts {
+    background: none !important;
+}
+
+.delete-confirmation-board {
+    background: #fff;
+    padding: 1rem;
+    border-radius: 2px;
+}
 
 /*For Tablets*/
 
@@ -521,6 +535,10 @@ section:hover > .removeColumnButton {
 /*For Mobile*/
 
 @media only screen and (max-width: 550px){
+    #delete-board-confirmation .btn {
+        padding: 0.25rem 0.1rem;
+    }
+
     .form-container {
         min-width: 0;
     }

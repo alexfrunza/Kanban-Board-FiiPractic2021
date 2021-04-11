@@ -38,7 +38,7 @@ class TaskColumn extends DomNode {
         };
         this.remove = (event, duration=500) => {
             this._hideDeleteConfirmation();
-            this._remove(event, duration);
+            return this._remove(event, duration);
         };
     }
 
@@ -73,12 +73,14 @@ class TaskColumn extends DomNode {
             {opacity: 0}
         ], duration);
         animation.onfinish = () => {
-            this.tasks.forEach((task) => {
-                task.deleteTask();
-            });
-            fetch(this.columnLink, {method: 'DELETE'}).then()
             this.node.remove();
         }
+        const deleteTasks = this.tasks.map((task) => {
+            return task.deleteTask();
+        });
+        return Promise.all(deleteTasks).then(() => {
+            return fetch(this.columnLink, {method: 'DELETE'});
+        });
     }
 
     getTaskById(id) {
